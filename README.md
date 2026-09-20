@@ -14,8 +14,6 @@ It helps you manage your game data, including:
 - mission programs and contracts
 - history and transactions
 
-The application is based on **Starship Factory Command v0.7.9**.
-
 ### Launching the application
 
 1. On GitHub, click **Code → Download ZIP** to download the repository.
