@@ -55,4 +55,4 @@ You can change the language from inside the application if another language is a
 
 ## Version
 
-**Starship Factory Command v0.7.9**
+**Starship Factory Command v0.6.7**
