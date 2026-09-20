@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Starship Factory Command v0.7.9</title>
+<style>
+:root{--bg:#080d18;--panel:#111a2c;--text:#edf3ff;--muted:#91a0bd;--accent:#5d9cff;--good:#42d49a;--bad:#ff647c;--warn:#f4c95d;--line:#263553}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#070c16,#101a30);color:var(--text);font-family:Segoe UI,Arial,sans-serif}.container{max-width:1300px;margin:auto;padding:24px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}h1{margin:0;font-size:28px}h2{margin:0 0 15px}.muted{color:var(--muted);font-size:13px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}button.secondary{background:#273553}button.good{background:#197b5a}button.danger{background:#8d2940}button.small{padding:6px 9px;font-size:12px}
+select,input,textarea{width:100%;background:#0b1324;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:5px}label{display:block;color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}.card{background:rgba(17,26,44,.95);border:1px solid var(--line);border-radius:14px;padding:17px}.stat{font-size:25px;font-weight:800;margin-top:6px}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:15px}.tab{background:#182540}.tab.active{background:var(--accent)}.page{display:none}.page.active{display:block}
+.cols{display:grid;grid-template-columns:1.1fr .9fr;gap:15px}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}
+table{width:100%;border-collapse:collapse}th,td{padding:9px 7px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{color:var(--muted)}
+.badge{display:inline-block;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:700}.success{background:#153d31;color:var(--good)}.failure{background:#481d2a;color:var(--bad)}.pending{background:#443919;color:var(--warn)}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.item{background:#0d1628;border:1px solid var(--line);padding:12px;border-radius:10px}.item b{display:block;margin-bottom:5px}
+.progress{height:8px;background:#26324a;border-radius:20px;overflow:hidden;margin:8px 0}.bar{height:100%;background:var(--accent)}.empty{text-align:center;padding:30px;color:var(--muted)}
+.notice{padding:10px 12px;border-radius:9px;background:#18243b;margin-bottom:12px;font-size:13px}.kpi{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:8px 0}
+.price{font-weight:800}.lang{min-width:55px}.source{font-size:11px;color:var(--muted);margin-top:8px}
+.modal{border:1px solid #304363;border-radius:18px;padding:0;width:min(520px,calc(100vw - 28px));background:#111a2c;color:var(--text);box-shadow:0 30px 90px rgba(0,0,0,.55)}
+.modal::backdrop{background:rgba(3,7,15,.74);backdrop-filter:blur(7px)}
+.modalHead{padding:20px 22px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.modalTitle{font-size:19px;font-weight:800}.modalBody{padding:20px 22px}.modalText{color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:14px}
+.modalActions{display:flex;justify-content:flex-end;gap:8px;padding:0 22px 20px}.modalClose{background:transparent;color:var(--muted);padding:5px 8px;font-size:18px}.modalClose:hover{color:var(--text)}
+.modal input,.modal select{margin-top:7px;background:#0a1221;border-color:#304363}.modalField{display:block;color:var(--muted);font-size:13px}.modalGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.toastWrap{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;gap:9px;pointer-events:none}
+.toast{min-width:260px;max-width:420px;padding:13px 15px;border:1px solid #304363;border-radius:12px;background:#121d31;box-shadow:0 15px 40px rgba(0,0,0,.35)}
+.toast b{display:block;margin-bottom:3px}.toast span{font-size:13px;color:var(--muted)}
+.constellationCard{background:linear-gradient(145deg,#101a2c,#0c1525);border:1px solid #2a3b5b;border-radius:14px;padding:15px;margin-bottom:11px}
+.constellationTop{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.constellationName{font-size:16px;font-weight:800}
+.constellationMeta{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}.typeBadge{padding:4px 8px;border-radius:999px;background:#1a2b47;color:#9fc4ff;font-size:11px;font-weight:700}
+.satelliteGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.satelliteChip{padding:9px 10px;border-radius:10px;background:#0a1220;border:1px solid #233452;display:flex;justify-content:space-between;gap:8px;font-size:12px}
+.satelliteChip small{color:var(--muted)}.miniBtn{padding:6px 9px;font-size:11px;background:#1a2b47}
+.payloadRow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.payloadSummary{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.satelliteBatch{padding:10px 12px;border-radius:10px;background:#0b1424;border:1px solid #233452}.satelliteMore{margin-top:8px;color:var(--muted);font-size:12px}@media(max-width:600px){.payloadRow{grid-template-columns:1fr}}.emptyBox{padding:22px;border:1px dashed #304363;border-radius:12px;text-align:center;color:var(--muted)}
+.sectionTitle{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+@media(max-width:600px){.modalGrid,.satelliteGrid{grid-template-columns:1fr}}
+
+@media(max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}.cols{grid-template-columns:1fr}}@media(max-width:600px){.grid,.form{grid-template-columns:1fr}.container{padding:13px}}
+
+/* Production UI refresh */
+.productionStats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 20px}
+.productionStat{display:flex;align-items:center;gap:10px;padding:13px 15px;background:linear-gradient(135deg,#101b30,#17243c);border:1px solid #2b3c60;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.productionStat>span{font-size:22px}.productionStat small{display:block;color:var(--muted);font-size:11px;margin-bottom:3px}.productionStat b{font-size:18px}
+#production h3{display:flex;align-items:center;gap:8px;padding:10px 12px;margin-bottom:8px;background:linear-gradient(90deg,rgba(93,156,255,.10),transparent);border-left:3px solid var(--accent);border-radius:7px}
+#production table{border-collapse:separate;border-spacing:0 5px}
+#production thead th{border-bottom:1px solid #314363;padding-top:7px;padding-bottom:7px}
+#production tbody tr{background:#0d1628;transition:transform .12s ease,background .12s ease,box-shadow .12s ease}
+#production tbody tr:hover{background:#111d33;box-shadow:0 5px 18px rgba(0,0,0,.18);transform:translateY(-1px)}
+#production td{border-bottom:0;padding:11px 8px}
+#production td:first-child{border-radius:9px 0 0 9px}.productRow td:last-child{border-radius:0 9px 9px 0}
+.productName{display:flex;align-items:center;gap:9px;min-width:220px}.productIcon{width:28px;height:28px;display:grid;place-items:center;background:#182540;border-radius:8px}
+.productName b{display:block;font-size:13px}.productCategory{display:inline-block;margin-top:4px;padding:2px 6px;border-radius:10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.productCategory.ship{background:#243b62;color:#8ebcff}.productCategory.booster{background:#3a3020;color:#f4c95d}.productCategory.infra{background:#20372f;color:#6fe0b1}
+.priceCell{font-weight:700}.priceInput{margin-top:0;min-width:125px}.stockBadge{display:inline-grid;place-items:center;min-width:34px;padding:5px 9px;border-radius:999px;background:#1b2437;color:#9aa8c3;font-weight:800}.stockBadge.hasStock{background:#153d31;color:var(--good)}
+.productActions{display:flex;gap:6px;flex-wrap:wrap}
+#production .source{margin-top:14px;padding:9px 11px;border-radius:8px;background:#0b1324;border:1px solid #202e49;color:#7182a3;font-size:10px}
+@media(max-width:850px){.productionStats{grid-template-columns:1fr}.productName{min-width:170px}}
+
+/* Finance reliability / v0.7.9 */
+.recurringItem{padding:12px 14px!important}
+.recurringTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+</style>
+</head>
+<body>
+<div class="container">
+<header class="top">
+<div><h1>🚀 Starship Factory Command</h1></div>
+<div>
+<div class="actions" style="margin:0">
+<button class="secondary" onclick="exportSave()">💾 <span data-t="export">Eksportuj save</span></button>
+<button class="secondary" onclick="importSave()">📂 <span data-t="import">Importuj save</span></button>
+<button class="secondary lang" onclick="toggleLang()" id="langBtn">EN</button>
+</div>
+</div>
+</header>
+
+<div class="grid">
+<div class="card"><div class="muted" data-t="budget">💰 Budżet</div><div class="stat" id="funds">$0</div></div>
+<div class="card"><div class="muted" data-t="successfulFlights">🚀 Udane loty</div><div class="stat" id="launches">0</div></div>
+<div class="card"><div class="muted" data-t="satellites">🛰️ Satelity</div><div class="stat" id="sats">0</div></div>
+<div class="card"><div class="muted" data-t="activeContracts">📋 Aktywne kontrakty</div><div class="stat" id="activeContractsCount">0</div></div>
+<div class="card"><div class="muted" data-t="saveName">💾 Zapis</div><div class="stat" id="profileName" style="font-size:17px">Nowa agencja</div></div>
+</div>
+
+<div class="tabs">
+<button class="tab active" onclick="tab('dashboard',this)" data-t="dashboard">📊 Centrum</button>
+<button class="tab" onclick="tab('flight',this)" data-t="newFlight">🚀 Nowy lot</button>
+<button class="tab" onclick="tab('fleet',this)" data-t="fleet">🛠️ Flota</button>
+<button class="tab" onclick="tab('production',this)" data-t="production">🏭 Produkcja</button>
+<button class="tab" onclick="tab('finance',this)" data-t="finance">💰 Finanse</button>
+<button class="tab" onclick="tab('contracts',this)" data-t="contracts">📋 Programy misji</button>
+<button class="tab" onclick="tab('satellites',this)" data-t="satelliteMenu">🌌 Konstelacje</button>
+<button class="tab" onclick="tab('history',this)" data-t="history">📜 Historia</button><button class="tab" onclick="tab('settings',this)">⚙️ Ustawienia</button>
+
+</div>
+
+<section id="dashboard" class="page active">
+<div class="card" style="margin-bottom:15px">
+  <div class="sectionTitle">
+    <div><h2 style="margin-bottom:4px">📅 <span data-t="gameDate">Game Date</span></h2>
+    <div class="muted" id="gameDateInfo"></div></div>
+    <button class="secondary" onclick="changeGameDate()" data-t="changeDate">Change date</button>
+  </div>
+  <div class="stat" id="gameDateDisplay">January 1, 2020</div>
+  <div class="muted" id="gameDateDelta" style="margin-top:6px"></div>
+</div>
+<div class="cols">
+<div class="card"><h2 data-t="recentFlights">📈 Ostatnie loty</h2><div id="dashHistory"></div></div>
+<div class="card"><h2 data-t="activePrograms">🎯 Aktywne programy</h2><div id="dashContracts"></div></div>
+</div>
+</section>
+
+<section id="flight" class="page">
+<div class="card"><h2 data-t="registerFlight">🚀 Zarejestruj lot</h2>
+<div class="form">
+<label data-t="missionName">Nazwa misji<input id="fName" placeholder="KSA-001"></label>
+<label data-t="program">Program<select id="fProgram"><option value="Starlink"></option><option value="Earth Observation"></option><option value="Lunar"></option><option value="Mars"></option><option value="Heavy Launch"></option><option value="Other"></option></select></label>
+<label data-t="booster">Booster<select id="fBooster"></select></label>
+<label data-t="ship">Ship<select id="fShip"></select></label>
+<label data-t="destination">Cel / orbita<input id="fDestination" placeholder="LEO / Lunar Orbit"></label>
+<label data-t="payloadMode">Typ ładunku<select id="fPayloadMode" onchange="updatePayloadFields()">
+<option value="none">Brak ładunku</option>
+<option value="constellation">Satelity konstelacji</option>
+<option value="individual">Pojedyncze satelity własne</option>
+<option value="customer">Ładunek klienta</option>
+</select></label>
+<label data-t="payloadCount">Liczba<input id="fSats" type="number" min="0" value="0"></label>
+<label data-t="payloadConstellation" id="payloadConstellationField">Konstelacja<select id="fPayloadConst"></select></label>
+<label data-t="payloadName" id="payloadNameField">Nazwa / typ ładunku<input id="fPayloadName" placeholder="Starlink"></label>
+<label data-t="result">Wynik<select id="fResult"><option value="success"></option><option value="failure"></option></select></label>
+<label data-t="boosterFate">Los boostera<select id="fRecovery"><option value="recovered"></option><option value="lost"></option><option value="unknown"></option></select></label>
+<label data-t="shipFate">Los Shipa<select id="fShipFate"><option value="destroyed">Zniszczony</option><option value="survived">Przetrwał lądowanie</option></select></label>
+<label data-t="linkedProgram">Powiązany program<select id="fContract"></select></label>
+<label data-t="income">Przychód ($)<input id="fIncome" type="number" value="0"></label>
+<label data-t="flightCost">Koszt lotu ($)<input id="fCost" type="number" value="0"></label>
+<label class="full" data-t="notes">Notatka<textarea id="fNotes" rows="3" placeholder="Np. 3 satelity na orbitę Księżyca"></textarea></label>
+</div>
+<div class="actions"><button onclick="addFlight()" data-t="saveFlight">🚀 Zapisz lot</button></div>
+</div>
+</section>
+
+<section id="fleet" class="page">
+<div class="cols">
+<div class="card"><h2 data-t="boosters">🚀 Boostery</h2>
+<div class="form"><label data-t="model">Model<select id="bModel"></select></label><label data-t="instanceName">Nazwa egzemplarza<input id="bName" placeholder="Booster B1"></label></div>
+<div class="actions"><button onclick="addBooster()" data-t="addBooster">Dodaj booster</button></div><br><div id="boosters"></div></div>
+<div class="card"><h2 data-t="ships">🛸 Shipy</h2>
+<div class="form"><label data-t="model">Model<select id="sModel"></select></label><label data-t="instanceName">Nazwa egzemplarza<input id="sName" placeholder="Ship S1"></label></div>
+<div class="actions"><button onclick="addShip()" data-t="addShip">Dodaj ship</button></div><br><div id="ships"></div></div>
+</div>
+</section>
+
+
+<section id="production" class="page">
+<div class="card">
+  <h2 data-t="productionTitle">🏭 Produkcja</h2>
+  
+  <div id="productionStats" class="productionStats"></div>
+
+  <h3 data-t="vehiclesProduction">🚀 Pojazdy i części</h3>
+  <div style="overflow:auto"><table><thead><tr>
+  <th data-t="item">Element</th><th data-t="category">Kategoria</th><th data-t="defaultPrice">Cena domyślna</th><th data-t="yourPrice">Twoja cena</th><th data-t="stock">Stan</th><th data-t="action">Akcja</th>
+  </tr></thead><tbody id="vehicleCatalog"></tbody></table></div>
+
+  <h3 style="margin-top:24px" data-t="infrastructureProduction">🏗️ Budynki, zbiorniki i infrastruktura</h3>
+  <div style="overflow:auto"><table><thead><tr>
+  <th data-t="item">Element</th><th data-t="category">Kategoria</th><th data-t="defaultPrice">Cena domyślna</th><th data-t="yourPrice">Twoja cena</th><th data-t="stock">Stan</th><th data-t="action">Akcja</th>
+  </tr></thead><tbody id="infrastructureCatalog"></tbody></table></div>
+
+  
+</div>
+</section>
+
+
+<section id="finance" class="page">
+<div class="cols">
+<div class="card"><h2 data-t="financeOperation">💰 Operacja finansowa</h2><div class="form">
+<label data-t="description">Opis<input id="finDesc" placeholder="Zakup materiałów / kontrakt"></label>
+<label data-t="amount">Kwota ($)<input id="finAmount" type="number" placeholder="1000000"></label>
+</div><div class="actions"><button class="good" onclick="finance(1)" data-t="addMoney">➕ Dodaj pieniądze</button><button class="danger" onclick="finance(-1)" data-t="removeMoney">➖ Odejmij pieniądze</button></div></div>
+<div class="card"><h2 data-t="balance">📊 Bilans</h2><div id="financeSummary"></div></div>
+</div><br>
+<div class="card" style="margin-bottom:15px"><h2 data-t="recurringTitle">🔁 Przychody i wydatki cykliczne</h2><div class="notice" id="recurringNotice"></div>
+<div class="form">
+<label data-t="recurringName">Nazwa<input id="recName" placeholder="Starlink revenue"></label>
+<label data-t="recurringAmount">Kwota za okres ($)<input id="recAmount" type="number" min="0" value="1000000"></label>
+<label data-t="recurringType">Typ<select id="recType"><option value="income">Income</option><option value="expense">Expense</option></select></label>
+<label data-t="recurringPeriod">Okres<select id="recPeriod"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select></label>
+<label data-t="recurringStart">Start<input id="recStart" type="date"></label>
+</div><div class="actions"><button class="good" onclick="addRecurring()" data-t="addRecurring">Dodaj cykliczne</button></div>
+<div id="recurringList" style="margin-top:14px"></div></div>
+<div class="card"><h2 data-t="transactionLog">📒 Dziennik transakcji</h2><div id="finHistory"></div></div>
+</section>
+
+<section id="contracts" class="page">
+<div class="cols">
+<div class="card"><h2 data-t="newProgram">📋 Nowy program misji</h2><div class="form">
+<label data-t="programName">Nazwa programu<input id="cName" placeholder="Lunar Satellite Deployment"></label>
+<label data-t="type">Cel / typ<select id="cType"><option>Orbita księżyca</option><option>LEO</option><option>Mars</option><option>Starlink</option><option>Inne</option></select></label>
+<label data-t="requiredFlights">Wymagana liczba lotów<input id="cRequired" type="number" min="1" value="3"></label>
+<label data-t="requiredSats">Wymagane satelity łącznie<input id="cSats" type="number" min="0" value="3"></label>
+<label data-t="reward">Nagroda po ukończeniu ($)<input id="cReward" type="number" value="50000000"></label>
+<label data-t="perFlight">Bonus za każdy lot ($)<input id="cPerFlight" type="number" value="0"></label>
+<label class="full" data-t="descriptionLabel">Opis<input id="cDesc" placeholder="3 loty na orbitę Księżyca z satelitami"></label>
+</div><div class="actions"><button onclick="addContract()" data-t="createProgram">Utwórz program</button></div></div>
+<div class="card"><h2 data-t="example">💡 Przykład</h2><div class="notice" id="exampleText"></div></div>
+</div><br><div class="card"><h2 data-t="programs">🎯 Programy</h2><div id="contractList"></div></div>
+</section>
+
+
+<section id="satellites" class="page">
+<div class="cols">
+<div class="card">
+  <div class="sectionTitle"><h2 data-t="satelliteMenu">🌌 Konstelacje</h2><span class="badge pending" id="constellationCount">0</span></div>
+  <div class="actions">
+    <button onclick="addSatellitePrompt()" data-t="newSatelliteTitle">🛰️ Dodaj satelitę</button>
+    <button class="secondary" onclick="addConstellationPrompt()" data-t="newConstellationTitle">🌌 Dodaj konstelację</button>
+  </div>
+  <div id="constellationList" style="margin-top:12px"></div>
+</div>
+<div class="card">
+  <h2>🛰️ <span data-t="satelliteMenu">Konstelacje</span></h2>
+  <div id="satelliteInfo"></div>
+</div>
+</div>
+</section>
+
+<section id="history" class="page">
+<div class="card"><h2 data-t="allFlights">📜 Historia wszystkich lotów</h2><div id="historyList"></div></div>
+</section>
+</div>
+
+<dialog id="appModal" class="modal">
+  <div class="modalHead">
+    <div class="modalTitle" id="modalTitle">Starship Factory Command</div>
+    <button class="modalClose" type="button" onclick="closeModal(null)">✕</button>
+  </div>
+  <div class="modalBody" id="modalBody"></div>
+  <div class="modalActions" id="modalActions"></div>
+</dialog>
+<div class="toastWrap" id="toastWrap"></div>
+<section id="settings" class="page">
+<div class="card">
+  <h2 data-t="settingsTitle">⚙️ Settings</h2>
+  <div class="notice" style="margin-bottom:12px">UI is rebuilt directly from the current saved game state. Use this if a browser tab was left open while another save was changed.</div>
+  <button class="secondary" type="button" onclick="render()">↻ Refresh interface</button>
+  <div class="item" style="margin-bottom:10px">
+    <b data-t="compactNumbers">Compact large numbers</b>
+    <span class="muted" data-t="compactNumbersDesc">E.g. $123.4M instead of $123,456,789</span>
+    <label style="margin-top:10px"><input id="compactNumbers" type="checkbox" style="width:auto;margin-right:8px" onchange="toggleCompactNumbers()"> <span data-t="enable">Enable</span></label>
+  </div>
+  <div class="item">
+    <b data-t="confirmProduction">Confirm expensive purchases</b>
+    <span class="muted" data-t="confirmProductionDesc">Ask before producing an item costing more than $10M</span>
+    <label style="margin-top:10px"><input id="confirmProduction" type="checkbox" style="width:auto;margin-right:8px" checked onchange="toggleConfirmProduction()"> <span data-t="enable">Enable</span></label>
+  </div>
+</div>
+</section>
+
+<script>
+const SAVE_FORMAT='KSA_SAVE', SAVE_VERSION=10, LOCAL='SFC_V062_SAVES';
+const PRODUCTS=[
+ {n:'Small Water Tank',c:'Tank',p:300000},
+ {n:'LN2 Vaporizer',c:'Propellant',p:1500000},
+ {n:'Small LOX Tank',c:'Tank',p:800000},
+ {n:'Small CH4 Tank',c:'Tank',p:800000},
+ {n:'Nitrogen Tank',c:'Tank',p:500000},
+ {n:'Large CH4 Tank',c:'Tank',p:2500000},
+ {n:'Large LOX Tank',c:'Tank',p:2500000},
+ {n:'Launch Tower',c:'Launch Infrastructure',p:60000000},
+ {n:'Display Stand',c:'Test / Display',p:500000},
+ {n:'Static Fire Stand',c:'Test Infrastructure',p:5000000},
+ {n:'Suborbital Pad',c:'Launch Infrastructure',p:3000000},
+ {n:'Landing Pad',c:'Landing Infrastructure',p:5000000},
+ {n:'Orbital Pad',c:'Launch Infrastructure',p:50000000},
+ {n:'Scrap Yard',c:'Ground Infrastructure',p:1000000},
+ {n:'Storage Yard',c:'Ground Infrastructure',p:3000000},
+ {n:'Ring Storage',c:'Ground Infrastructure',p:5000000},
+ {n:'Raptor Storage',c:'Engine Infrastructure',p:2000000},
+ {n:'Welder Tent',c:'Production Infrastructure',p:1000000},
+ {n:'Low Bay',c:'Production Building',p:5000000},
+ {n:'Mid Bay',c:'Production Building',p:10000000},
+ {n:'High Bay',c:'Production Building',p:20000000},
+ {n:'Mega Bay',c:'Production Building',p:50000000},
+ {n:'Delivery Platform',c:'Logistics',p:2000000},
+ {n:'Logistics',c:'Logistics',p:1000000},
+ {n:'Fabricator',c:'Production Equipment',p:5000000},
+ {n:'XL Fabricator',c:'Production Equipment',p:15000000},
+ {n:'Welder Stand',c:'Production Equipment',p:2000000},
+ {n:'Starship Prototype',c:'Ship',p:20000000},
+ {n:'Suborbital Starship',c:'Ship',p:25000000},
+ {n:'Expendable Starship',c:'Ship',p:45000000},
+ {n:'Orbital Starship',c:'Ship',p:30000000},
+ {n:'Orbital Starship V2',c:'Ship',p:35000000},
+ {n:'Booster Prototype',c:'Booster',p:45000000},
+ {n:'Booster',c:'Booster',p:60000000}
+];
+const BOOSTER_MODELS=['Booster Prototype','Booster'];
+const SHIP_MODELS=['Starship Prototype','Suborbital Starship','Expendable Starship','Orbital Starship','Orbital Starship V2'];
+const TXT={
+ pl:{modalCancel:'Anuluj',modalOk:'OK',modalSave:'Zapisz',saveDialogTitle:'💾 Eksport zapisu',saveDialogText:'Nadaj nazwę temu zapisowi. Plik zostanie zapisany jako JSON.',saveFileName:'Nazwa zapisu',newConstellationTitle:'🌌 Nowa konstelacja',newConstellationText:'Utwórz własną konstelację i wybierz jej typ.',constellationName:'Nazwa konstelacji',constellationType:'Typ konstelacji',newSatelliteTitle:'🛰️ Dodaj satelitę',newSatelliteText:'Dodaj satelitę do wybranej konstelacji.',satelliteName:'Nazwa satelity',satelliteConstellation:'Konstelacja',satelliteStatus:'Status',satelliteAdded:'Satelita został dodany.',constellationAdded:'Konstelacja została dodana.',noConstellations:'Brak konstelacji.',noSatellites:'Brak satelitów w tej konstelacji.',satelliteCount:'satelitów',remove:'Usuń',broadband:'Starlink / Broadband',mobile:'Direct-to-Cell / Mobile',ai:'AI / Compute',science:'Nauka / dane',other:'Inne',orbital:'Na orbicie',planned:'Planowany',lostStatus:'Utracony',satelliteMenu:'🌌 Konstelacje',vehiclesProduction:'🚀 Pojazdy i części',infrastructureProduction:'🏗️ Budynki, zbiorniki i infrastruktura',compactNumbers:'Compact large numbers',compactNumbersDesc:'E.g. $123.4M instead of $123,456,789',enable:'Enable',confirmProduction:'Confirm expensive purchases',confirmProductionDesc:'Ask before producing an item costing more than $10M',confirmProduction:'Confirm expensive purchases',confirmProductionDesc:'Ask before producing an item costing more than $10M',alertTitle:'ℹ️ Informacja',errorTitle:'⚠️ Błąd',confirmTitle:'Potwierdzenie',subtitle:'Starship Factory v4.9b — ekonomia, flota, produkcja i kontrakty',saveHint:'JSON save v0.7.9 z numerem wersji — przyszłe wersje mogą migrować starsze zapisy',gameDate:'Data gry',changeDate:'Zmień datę',changeDateText:'Wpisz nową datę gry w formacie YYYY-MM-DD.',invalidDate:'Nieprawidłowa data. Użyj formatu YYYY-MM-DD.',pastDate:'Nie możesz cofnąć daty gry.',sameDate:'Data gry jest już ustawiona na tę datę.',gameDateInfo:'Zmiana daty uruchamia automatyczne rozliczenie wszystkich zaległych przychodów i wydatków.',recurringTitle:'🔁 Przychody i wydatki cykliczne',recurringNotice:'Ustaw stałe wpływy i koszty. Po przesunięciu daty gry aplikacja rozliczy wszystkie terminy, które minęły.',recurringName:'Nazwa',recurringType:'Typ',recurringIncome:'Przychód',recurringExpense:'Wydatek',recurringAmount:'Kwota za okres ($)',recurringPeriod:'Okres',daily:'Codziennie',weekly:'Co tydzień',monthly:'Co miesiąc',yearly:'Co rok',recurringStart:'Start',addRecurring:'Dodaj cykliczne',recurringNext:'Następny termin',recurringActive:'Aktywny',deactivate:'Wyłącz',noRecurring:'Brak cyklicznych operacji.',settlement:'Rozliczenie daty',settled:'Rozliczono',noDue:'Brak zaległych operacji.',transactionLog:'📒 Dziennik transakcji',payloadMode:'Typ ładunku',payloadName:'Nazwa / typ ładunku',payloadConstellation:'Konstelacja ładunku',customerPayload:'Ładunek klienta / bez konstelacji',payloadNotice:'Jeśli wybierzesz konstelację, liczba satelitów zostanie dodana automatycznie do niej po udanym locie.',payloadAdded:'Dodano satelity do konstelacji',constellationNotice:'Konstelacje i pojedyncze satelity zapisują się w stanie gry. Możesz dodawać wiele satelitów jedną operacją.',noPayloadConstellation:'Brak konstelacji / ładunek klienta',payloadNone:'Brak ładunku',payloadConstellationMode:'Satelity konstelacji',payloadIndividualMode:'Pojedyncze satelity własne',payloadCustomerMode:'Ładunek klienta',gameDateAdvanced:'Data gry przesunięta o',budget:'💰 Budżet',incomeTotal:'Przychody',expensesTotal:'Wydatki',successfulFlights:'🚀 Udane loty',satellites:'🛰️ Satelity',activeContracts:'📋 Aktywne kontrakty',saveName:'💾 Zapis',export:'Eksportuj save',import:'Importuj save',dashboard:'📊 Centrum',newFlight:'🚀 Nowy lot',fleet:'🛠️ Flota',production:'🏭 Produkcja',finance:'💰 Finanse',contracts:'📋 Programy misji',history:'📜 Historia',recentFlights:'📈 Ostatnie loty',activePrograms:'🎯 Aktywne programy',registerFlight:'🚀 Zarejestruj lot',flightNotice:'Wybierz konkretny booster i statek. Booster dostaje kolejny numer lotu. Ship po locie jest oznaczany jako zużyty, bo w Twoim systemie nie jest odzyskiwany.',missionName:'Nazwa misji',program:'Program',booster:'Booster',ship:'Ship',destination:'Cel / orbita',payloadCount:'Satelity / ładunek (liczba)',result:'Wynik',boosterFate:'Los boostera',shipFate:'Los Shipa',linkedProgram:'Powiązany program',income:'Przychód ($)',flightCost:'Koszt lotu ($)',notes:'Notatka',saveFlight:'🚀 Zapisz lot',boosters:'🚀 Boostery',boosterNotice:'Dodajesz konkretne egzemplarze. Po każdym locie rośnie numer lotu. Status pokazuje, czy booster został odzyskany.',ships:'🛸 Shipy',shipNotice:'Shipy są osobnymi egzemplarzami. Po locie dostają status „zużyty”, ponieważ w tej wersji nie zakładamy ich odzyskiwania.',model:'Model',instanceName:'Nazwa egzemplarza',addBooster:'Dodaj booster',addShip:'Dodaj ship',productionTitle:'🏭 Produkcja i infrastruktura',productionNotice:'Lista elementów pochodzi z dostarczonego screena Starship Factory v4.9b. Ceny są szacunkami do ekonomii tej aplikacji, a nie oficjalnymi cennikami SpaceX. Każdą cenę możesz zmienić.',item:'Element',category:'Kategoria',defaultPrice:'Cena domyślna',yourPrice:'Twoja cena',stock:'Stan',action:'Akcja',build:'Wyprodukuj 1',setPrice:'Ustaw cenę',financeOperation:'💰 Operacja finansowa',description:'Opis',amount:'Kwota ($)',addMoney:'➕ Dodaj pieniądze',removeMoney:'➖ Odejmij pieniądze',balance:'📊 Bilans',financeHistory:'📒 Historia finansów',newProgram:'📋 Nowy program misji',programName:'Nazwa programu',type:'Cel / typ',requiredFlights:'Wymagana liczba lotów',requiredSats:'Wymagane satelity łącznie',reward:'Nagroda po ukończeniu ($)',perFlight:'Bonus za każdy lot ($)',descriptionLabel:'Opis',createProgram:'Utwórz program',example:'💡 Przykład',programs:'🎯 Programy',allFlights:'📜 Historia wszystkich lotów',success:'Sukces',failure:'Niepowodzenie',recovered:'Odzyskany',lost:'Utracony',unknown:'Nie określono',programStarlink:'Starlink',programEarth:'Obserwacja Ziemi',programLunar:'Księżyc',programMars:'Mars',programHeavy:'Ciężki start',programOther:'Inne',statusNew:'Nowy',statusRecovered:'Odzyskany',statusLost:'Utracony',statusAfterFlight:'Po locie',statusUsed:'Zużyty',unknownDestination:'Nie określono',noFlights:'Brak lotów.',noPrograms:'Brak programów.',noFinance:'Brak operacji.',noBoosters:'Brak boosterów.',noShips:'Brak shipów.',cost:'Koszt',flights:'lotów',status:'status',mission:'Misja',date:'Data',payload:'Satelity',goal:'Cel',launch:'lot',completed:'UKOŃCZONY',active:'AKTYWNY',rewardShort:'Nagroda',productionSource:'Ceny są oparte na publicznych szacunkach kosztów Starship oraz na relacji skali infrastruktury; elementy z gry, dla których nie ma publicznego kosztu, mają autorski, grywalny szacunek.'},
+ en:{modalCancel:'Cancel',modalOk:'OK',modalSave:'Save',saveDialogTitle:'💾 Export save',saveDialogText:'Give this save a name. The file will be exported as JSON.',saveFileName:'Save name',newConstellationTitle:'🌌 New constellation',newConstellationText:'Create a custom constellation and choose its type.',constellationName:'Constellation name',constellationType:'Constellation type',newSatelliteTitle:'🛰️ Add satellite',newSatelliteText:'Add a satellite to the selected constellation.',satelliteName:'Satellite name',satelliteConstellation:'Constellation',satelliteStatus:'Status',satelliteAdded:'Satellite added.',constellationAdded:'Constellation added.',noConstellations:'No constellations.',noSatellites:'No satellites in this constellation.',satelliteCount:'satellites',remove:'Remove',broadband:'Starlink / Broadband',mobile:'Direct-to-Cell / Mobile',ai:'AI / Compute',science:'Science / data',other:'Other',orbital:'Orbital',planned:'Planned',lostStatus:'Lost',satelliteMenu:'🌌 Constellations',vehiclesProduction:'🚀 Vehicles & parts',infrastructureProduction:'🏗️ Buildings, tanks & infrastructure',compactNumbers:'Compact large numbers',compactNumbersDesc:'For example $123.4M instead of $123,456,789',confirmProduction:'Confirm expensive purchases',confirmProductionDesc:'Ask before producing an item costing more than $10M',alertTitle:'ℹ️ Information',errorTitle:'⚠️ Error',confirmTitle:'Confirmation',subtitle:'Starship Factory v4.9b — economy, fleet, production and contracts',saveHint:'JSON save v0.7.9 with a version number — future versions can migrate older saves',gameDate:'Game Date',changeDate:'Change date',changeDateText:'Enter the new game date in YYYY-MM-DD format.',invalidDate:'Invalid date. Use YYYY-MM-DD.',pastDate:'You cannot move the game date backwards.',sameDate:'The game date is already set to this date.',gameDateInfo:'Changing the date automatically settles all due recurring income and expenses.',recurringTitle:'🔁 Recurring income & expenses',recurringNotice:'Set recurring cash inflows and costs. When you advance the game date, all due periods are settled automatically.',recurringName:'Name',recurringType:'Type',recurringIncome:'Income',recurringExpense:'Expense',recurringAmount:'Amount per period ($)',recurringPeriod:'Period',daily:'Daily',weekly:'Weekly',monthly:'Monthly',yearly:'Yearly',recurringStart:'Start',addRecurring:'Add recurring',recurringNext:'Next due',recurringActive:'Active',deactivate:'Disable',noRecurring:'No recurring operations.',settlement:'Date settlement',settled:'Settled',noDue:'No due operations.',transactionLog:'📒 Transaction log',payloadMode:'Payload type',payloadName:'Payload name / type',payloadConstellation:'Payload constellation',customerPayload:'Customer payload / no constellation',payloadNotice:'If you choose a constellation, the satellite count will be added to it automatically after a successful flight.',payloadAdded:'Satellites added to constellation',constellationNotice:'Constellations and individual satellites are saved in the game state. You can add many satellites in one operation.',noPayloadConstellation:'No constellation / customer payload',payloadNone:'No payload',payloadConstellationMode:'Constellation satellites',payloadIndividualMode:'Owned individual satellites',payloadCustomerMode:'Customer payload',gameDateAdvanced:'Game date advanced by',budget:'💰 Budget',incomeTotal:'Income',expensesTotal:'Expenses',successfulFlights:'🚀 Successful flights',satellites:'🛰️ Satellites',activeContracts:'📋 Active contracts',saveName:'💾 Save',export:'Export save',import:'Import save',dashboard:'📊 Dashboard',newFlight:'🚀 New flight',fleet:'🛠️ Fleet',production:'🏭 Production',finance:'💰 Finance',contracts:'📋 Mission programs',history:'📜 History',recentFlights:'📈 Recent flights',activePrograms:'🎯 Active programs',registerFlight:'🚀 Register flight',flightNotice:'Choose a specific booster and ship. The booster gets the next flight number. The ship is marked as used after a flight because this version does not recover ships.',missionName:'Mission name',program:'Program',booster:'Booster',ship:'Ship',destination:'Destination / orbit',payloadCount:'Satellites / payload (count)',result:'Result',boosterFate:'Booster fate',shipFate:'Ship fate',linkedProgram:'Linked program',income:'Income ($)',flightCost:'Flight cost ($)',notes:'Notes',saveFlight:'🚀 Save flight',boosters:'🚀 Boosters',boosterNotice:'Add individual vehicles. Each flight increases the flight number. Status shows whether the booster was recovered.',ships:'🛸 Ships',shipNotice:'Ships are individual vehicles. After a flight they become “used” because this version does not assume ship recovery.',model:'Model',instanceName:'Vehicle name',addBooster:'Add booster',addShip:'Add ship',productionTitle:'🏭 Production & infrastructure',productionNotice:'The item list comes from the supplied Starship Factory v4.9b screenshot. Prices are estimates for this app, not official SpaceX price lists. Every price can be changed.',item:'Item',category:'Category',defaultPrice:'Default price',yourPrice:'Your price',stock:'Stock',action:'Action',build:'Build 1',setPrice:'Set price',financeOperation:'💰 Financial operation',description:'Description',amount:'Amount ($)',addMoney:'➕ Add money',removeMoney:'➖ Remove money',balance:'📊 Balance',financeHistory:'📒 Financial history',newProgram:'📋 New mission program',programName:'Program name',type:'Goal / type',requiredFlights:'Required flights',requiredSats:'Required satellites total',reward:'Reward on completion ($)',perFlight:'Bonus per flight ($)',descriptionLabel:'Description',createProgram:'Create program',example:'💡 Example',programs:'🎯 Programs',allFlights:'📜 All flight history',success:'Success',failure:'Failure',recovered:'Recovered',lost:'Lost',unknown:'Not specified',programStarlink:'Starlink',programEarth:'Earth Observation',programLunar:'Lunar',programMars:'Mars',programHeavy:'Heavy Launch',programOther:'Other',statusNew:'New',statusRecovered:'Recovered',statusLost:'Lost',statusAfterFlight:'After flight',statusUsed:'Used',unknownDestination:'Not specified',noFlights:'No flights.',noPrograms:'No programs.',noFinance:'No financial operations.',noBoosters:'No boosters.',noShips:'No ships.',cost:'Cost',flights:'flights',status:'status',mission:'Mission',date:'Date',payload:'Satellites',goal:'Goal',launch:'flight',completed:'COMPLETED',active:'ACTIVE',rewardShort:'Reward',productionSource:'Prices use public Starship cost estimates and relative infrastructure scale; where no public item-level cost exists, a custom game-balanced estimate is used.'}
+};
+let lang='en';
+let state={name:'Nowa agencja',funds:0,flights:[],finance:[],boosters:[],ships:[],contracts:[],production:{},constellations:[],satellites:[],settings:{compactNumbers:false,confirmProduction:true},gameDate:'2020-01-01',recurring:[]};
+
+function t(k){return TXT[lang][k]||k}
+function uid(){return Date.now()+Math.random().toString(16).slice(2)}
+function money(n){
+ n=Number(n||0);
+ if(!state.settings?.compactNumbers)return '$'+n.toLocaleString('en-US');
+ const a=Math.abs(n),sgn=n<0?'-':'';
+ if(a>=1e12)return sgn+'$'+(a/1e12).toFixed(a>=1e13?0:1)+'T';
+ if(a>=1e9)return sgn+'$'+(a/1e9).toFixed(a>=1e10?0:1)+'B';
+ if(a>=1e6)return sgn+'$'+(a/1e6).toFixed(a>=1e7?0:1)+'M';
+ if(a>=1e3)return sgn+'$'+(a/1e3).toFixed(a>=1e4?0:1)+'K';
+ return sgn+'$'+a.toLocaleString('en-US');
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function getSaves(){try{let x=JSON.parse(localStorage.getItem(LOCAL)||'{}');return x&&typeof x==='object'&&!Array.isArray(x)?x:{}}catch(e){return {}}}
+function persist(){try{let a=getSaves();a[state.name]=state;localStorage.setItem(LOCAL,JSON.stringify(a))}catch(e){}}
+function migrate(x,v){
+ x=x&&typeof x==='object'?x:{};
+ if(!Array.isArray(x.flights))x.flights=[];
+ if(!Array.isArray(x.finance))x.finance=[];
+ if(!Array.isArray(x.boosters))x.boosters=[];
+ if(!Array.isArray(x.ships))x.ships=[];
+ if(!Array.isArray(x.contracts))x.contracts=[];
+ if(!x.production||typeof x.production!=='object')x.production={};
+ PRODUCTS.forEach(p=>{
+   const d=x.production[p.n];
+   if(!d||typeof d!=='object')x.production[p.n]={price:p.p,stock:0};
+   else{
+     if(!Number.isFinite(Number(d.price))||Number(d.price)<=0)d.price=p.p;
+     if(!Number.isFinite(Number(d.stock))||Number(d.stock)<0)d.stock=0;
+   }
+ });
+ if(typeof x.funds!=='number'||!Number.isFinite(x.funds))x.funds=0;
+ if(typeof x.name!=='string'||!x.name.trim())x.name='Imported Agency';
+ if(!x.settings||typeof x.settings!=='object')x.settings={};
+ if(typeof x.settings.compactNumbers!=='boolean')x.settings.compactNumbers=false;
+ if(typeof x.settings.confirmProduction!=='boolean')x.settings.confirmProduction=true;
+ if(typeof x.gameDate!=='string'||!parseGameDate(x.gameDate))x.gameDate='2020-01-01';
+ if(!Array.isArray(x.recurring))x.recurring=[];
+ if(!Array.isArray(x.constellations))x.constellations=[];
+ if(!Array.isArray(x.satellites))x.satellites=[];
+ x.recurring=x.recurring.map((r,i)=>({
+   id:r.id||'rec-'+i+'-'+uid(),
+   name:String(r.name||'Recurring operation'),
+   type:r.type==='expense'?'expense':'income',
+   amount:Math.max(0,Number(r.amount)||0),
+   period:['daily','weekly','monthly','yearly'].includes(r.period)?r.period:'monthly',
+   startDate:(typeof r.startDate==='string'&&parseGameDate(r.startDate))?r.startDate:x.gameDate,
+   nextDueDate:(typeof r.nextDueDate==='string'&&parseGameDate(r.nextDueDate))?r.nextDueDate:addPeriodToGameDate(x.gameDate,['daily','weekly','monthly','yearly'].includes(r.period)?r.period:'monthly'),
+   active:r.active!==false,
+   sourceType:r.sourceType||'manual',
+   sourceId:r.sourceId||''
+ }));
+ const defs=[
+  {id:'starlink',name:'Starlink',type:'broadband',description:'Starlink constellation'},
+  {id:'starmind',name:'Starmind',type:'ai',description:'Starmind constellation'}
+ ];
+ if(!x.constellations.length)x.constellations=defs.map(c=>({...c,satellites:0,revenuePerSatellite:0,revenuePeriod:'monthly',revenueEnabled:false}));
+ // Migrate the old built-in Starlink Mobile + Orbital AI Compute into one Starmind constellation.
+ let starlink=x.constellations.find(c=>c.id==='starlink'||c.name==='Starlink'||c.name==='Starlink Broadband');
+ let oldMobile=x.constellations.find(c=>c.id==='mobile'||c.name==='Starlink Mobile');
+ let oldAi=x.constellations.find(c=>c.id==='ai'||c.name==='Orbital AI Compute');
+ let starmind=x.constellations.find(c=>c.id==='starmind'||c.name==='Starmind');
+ if(!starlink){starlink={id:'starlink',name:'Starlink',type:'broadband',description:'Starlink constellation',satellites:0,revenuePerSatellite:0,revenuePeriod:'monthly',revenueEnabled:false};x.constellations.unshift(starlink);}
+ if(!starmind){starmind=oldAi||oldMobile||{id:'starmind',name:'Starmind',type:'ai',description:'Starmind constellation',satellites:0,revenuePerSatellite:0,revenuePeriod:'monthly',revenueEnabled:false};starmind.id='starmind';starmind.name='Starmind';}
+ x.constellations=x.constellations.map(c=>({
+   id:c.id||'const-'+uid(),
+   name:String(c.name||'Constellation'),
+   type:c.type||'other',
+   description:String(c.description||'Custom constellation'),
+   satellites:0,
+   revenuePerSatellite:Math.max(0,Number(c.revenuePerSatellite)||0),
+   revenuePeriod:['daily','weekly','monthly','yearly'].includes(c.revenuePeriod)?c.revenuePeriod:'monthly',
+   revenueEnabled:c.revenueEnabled===true
+ })).filter(c=>c.id!=='mobile'&&c.id!=='ai'&&c.name!=='Starlink Mobile'&&c.name!=='Orbital AI Compute');
+ if(!x.constellations.some(c=>c.id==='starmind'))x.constellations.push({...starmind,id:'starmind',name:'Starmind'});
+ // Re-map satellites that belonged to the two old built-ins to Starmind.
+ x.satellites=x.satellites.map(s=>{
+   if(s.constellation==='mobile'||s.constellation==='ai')s.constellation='starmind';
+   return s;
+ });
+ x.constellations=x.constellations.map((c,i)=>({
+   id:c.id||'const-'+i+'-'+uid(),
+   name:String(c.name||'Constellation '+(i+1)),
+   type:c.type||'other',
+   description:String(c.description||'Custom constellation'),
+   satellites:0,
+   revenuePerSatellite:Math.max(0,Number(c.revenuePerSatellite)||0),
+   revenuePeriod:['daily','weekly','monthly','yearly'].includes(c.revenuePeriod)?c.revenuePeriod:'monthly',
+   revenueEnabled:c.revenueEnabled===true
+ }));
+ const fallbackConst=x.constellations[0]?.id||'';
+ x.satellites=x.satellites.map((s,i)=>({
+   id:s.id||'sat-'+i+'-'+uid(),
+   name:String(s.name||'Satellite '+(i+1)),
+   constellation:(typeof s.constellation==='string'?s.constellation:fallbackConst),
+   status:s.status||'Orbital',
+   owned:s.owned!==false,
+   sourceFlight:s.sourceFlight||'',
+   revenueAmount:Math.max(0,Number(s.revenueAmount)||0),
+   revenuePeriod:['daily','weekly','monthly','yearly'].includes(s.revenuePeriod)?s.revenuePeriod:'monthly',
+   revenueEnabled:s.revenueEnabled===true,
+   nextRevenueDate:(typeof s.nextRevenueDate==='string'&&parseGameDate(s.nextRevenueDate))?s.nextRevenueDate:'',
+   revenueStartDate:(typeof s.revenueStartDate==='string'&&parseGameDate(s.revenueStartDate))?s.revenueStartDate:''
+ }));
+ x.constellations.forEach(c=>c.satellites=x.satellites.filter(s=>s.constellation===c.id).length);
+ x.boosters=x.boosters.map(b=>({...b,id:b.id||uid(),flights:Number(b.flights)||0,status:b.status||'Nowy',model:b.model||b.type||'Booster',name:b.name||b.model||'Booster'}));
+ x.ships=x.ships.map(s=>({...s,id:s.id||uid(),flights:Number(s.flights)||0,status:s.status||'Nowy',model:s.model||s.type||'Orbital Starship',name:s.name||s.model||'Ship'}));
+ x.contracts=x.contracts.map(c=>({...c,id:c.id||uid(),name:c.name||'New Program',type:c.type||'Inne',required:Number(c.required)||1,requiredSats:Number(c.requiredSats)||0,reward:Number(c.reward)||0,perFlight:Number(c.perFlight)||0,desc:c.desc||'',flights:Number(c.flights)||0,sats:Number(c.sats)||0,completed:!!c.completed,createdDate:c.createdDate||x.gameDate}));
+ return x;
+}
+let modalResolver=null;
+function closeModal(result=null){const d=document.getElementById('appModal');if(d.open)d.close();if(modalResolver){const r=modalResolver;modalResolver=null;r(result);}}
+function openModal(title,body,actions){const d=document.getElementById('appModal');document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modalActions').innerHTML=actions;d.showModal();}
+function uiPrompt(title,text,value,label){return new Promise(resolve=>{modalResolver=resolve;const id='modalInput_'+Date.now();openModal(title,`<div class="modalText">${esc(text)}</div><label class="modalField">${esc(label||'')}<input id="${id}" value="${esc(value||'')}" autocomplete="off"></label>`,`<button class="secondary" type="button" onclick="closeModal(null)">${t('modalCancel')}</button><button type="button" onclick="closeModal(document.getElementById('${id}').value)">${t('modalOk')}</button>`);setTimeout(()=>{const e=document.getElementById(id);if(e){e.focus();e.select();e.addEventListener('keydown',k=>{if(k.key==='Enter')closeModal(e.value);if(k.key==='Escape')closeModal(null);});}},30);});}
+function uiConfirm(title,text){return new Promise(resolve=>{modalResolver=resolve;openModal(title,`<div class="modalText">${esc(text)}</div>`,`<button class="secondary" type="button" onclick="closeModal(false)">${t('modalCancel')}</button><button type="button" onclick="closeModal(true)">${t('modalOk')}</button>`);});}
+function uiAlert(title,text){return new Promise(resolve=>{modalResolver=resolve;openModal(title,`<div class="modalText">${esc(text)}</div>`,`<button type="button" onclick="closeModal(true)">${t('modalOk')}</button>`);});}
+document.getElementById('appModal').addEventListener('cancel',e=>{e.preventDefault();closeModal(null)});
+function toast(title,text){const w=document.getElementById('toastWrap'),e=document.createElement('div');e.className='toast';e.innerHTML=`<b>${esc(title)}</b><span>${esc(text)}</span>`;w.appendChild(e);setTimeout(()=>e.remove(),3000);}
+async function exportSave(){const name=await uiPrompt(t('saveDialogTitle'),t('saveDialogText'),state.name,t('saveFileName'));if(name===null)return;state.name=String(name).trim()||state.name;const data={format:SAVE_FORMAT,saveVersion:SAVE_VERSION,exportedAt:new Date().toISOString(),state:migrate(state,SAVE_VERSION)};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=state.name.replace(/[^a-z0-9_-]+/gi,'_')+'.ksa.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);persist();render();}
+function importSave(){const input=document.createElement('input');input.type='file';input.accept='.json,.ksa';input.onchange=async e=>{try{if(!e.target.files[0])return;const raw=JSON.parse(await e.target.files[0].text());state=migrate(raw.state||raw,raw.saveVersion||1);persist();render();toast(t('saveName'),lang==='pl'?'Zapis wczytany: '+state.name:'Save loaded: '+state.name);}catch(err){uiAlert(t('errorTitle'),lang==='pl'?'Nieprawidłowy plik zapisu.':'Invalid save file.')}};input.click();}
+
+function constellationTypeLabel(type){return ({broadband:t('broadband'),mobile:t('mobile'),ai:t('ai'),science:t('science'),other:t('other')})[type]||t('other');}
+async function addConstellationPrompt(){
+ const body=`<div class="modalText">${t('newConstellationText')}</div>
+ <label class="modalField">${t('constellationName')}<input id="newConstName" placeholder="Starlink Science"></label>
+ <label class="modalField" style="margin-top:12px">${t('constellationType')}
+ <select id="newConstType"><option value="broadband">${t('broadband')}</option><option value="mobile">${t('mobile')}</option><option value="ai">${t('ai')}</option><option value="science">${t('science')}</option><option value="other">${t('other')}</option></select></label>
+ <div class="modalGrid" style="margin-top:12px">
+  <label class="modalField">${lang==='pl'?'Przychód na satelitę ($)':'Revenue per satellite ($)'}<input id="newConstRevenue" type="number" min="0" value="0"></label>
+  <label class="modalField">${lang==='pl'?'Okres':'Period'}<select id="newConstRevenuePeriod"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select></label>
+ </div>
+ <label class="modalField" style="margin-top:12px"><span>${lang==='pl'?'Aktywuj automatyczny przychód':'Enable automatic revenue'} <input id="newConstRevenueEnabled" type="checkbox" style="width:auto;margin-left:8px"></span></label>`;
+ const r=await new Promise(resolve=>{modalResolver=resolve;openModal(t('newConstellationTitle'),body,`<button class="secondary" type="button" onclick="closeModal(null)">${t('modalCancel')}</button><button type="button" onclick="closeModal({name:document.getElementById('newConstName').value,type:document.getElementById('newConstType').value,revenue:document.getElementById('newConstRevenue').value,period:document.getElementById('newConstRevenuePeriod').value,enabled:document.getElementById('newConstRevenueEnabled').checked})">${t('modalSave')}</button>`);setTimeout(()=>document.getElementById('newConstName')?.focus(),20);});
+ if(!r)return;
+ const name=String(r.name||'').trim(), revenue=Math.max(0,Number(r.revenue)||0);
+ if(!name){await uiAlert(t('errorTitle'),lang==='pl'?'Podaj nazwę konstelacji.':'Enter a constellation name.');return;}
+ state.constellations.push({id:uid(),name,type:r.type||'other',satellites:0,description:lang==='pl'?'Własna konstelacja':'Custom constellation',revenuePerSatellite:revenue,revenuePeriod:r.period||'monthly',revenueEnabled:!!r.enabled&&revenue>0});
+ persist();render();toast(t('satelliteMenu'),t('constellationAdded'));
+}
+async function editConstellation(id){
+ const c=state.constellations.find(x=>x.id===id);if(!c)return;
+ const body=`<label class="modalField">${t('constellationName')}<input id="ecName" value="${esc(c.name)}"></label>
+ <div class="modalGrid" style="margin-top:12px">
+ <label class="modalField">${lang==='pl'?'Przychód na satelitę ($)':'Revenue per satellite ($)'}<input id="ecRevenue" type="number" min="0" value="${Number(c.revenuePerSatellite)||0}"></label>
+ <label class="modalField">${lang==='pl'?'Okres':'Period'}<select id="ecPeriod"><option value="daily" ${c.revenuePeriod==='daily'?'selected':''}>Daily</option><option value="weekly" ${c.revenuePeriod==='weekly'?'selected':''}>Weekly</option><option value="monthly" ${c.revenuePeriod==='monthly'?'selected':''}>Monthly</option><option value="yearly" ${c.revenuePeriod==='yearly'?'selected':''}>Yearly</option></select></label>
+ </div>
+ <label class="modalField" style="margin-top:12px"><span>${lang==='pl'?'Automatyczny przychód':'Automatic revenue'} <input id="ecEnabled" type="checkbox" style="width:auto;margin-left:8px" ${c.revenueEnabled?'checked':''}></span></label>`;
+ const r=await new Promise(resolve=>{modalResolver=resolve;openModal(lang==='pl'?'Edytuj konstelację':'Edit constellation',body,`<button class="secondary" onclick="closeModal(null)">${t('modalCancel')}</button><button onclick="closeModal({name:document.getElementById('ecName').value,revenue:document.getElementById('ecRevenue').value,period:document.getElementById('ecPeriod').value,enabled:document.getElementById('ecEnabled').checked})">${t('modalSave')}</button>`);});
+ if(!r)return;
+ c.name=String(r.name||'').trim()||c.name;c.revenuePerSatellite=Math.max(0,Number(r.revenue)||0);c.revenuePeriod=r.period||'monthly';c.revenueEnabled=!!r.enabled&&c.revenuePerSatellite>0;
+ // Apply constellation defaults to existing satellites that explicitly use the constellation.
+ state.satellites.filter(s=>s.constellation===c.id).forEach(s=>{
+   s.revenueAmount=c.revenuePerSatellite;s.revenuePeriod=c.revenuePeriod;s.revenueEnabled=c.revenueEnabled;
+   if(c.revenueEnabled&&!s.nextRevenueDate)s.nextRevenueDate=addPeriodToGameDate(state.gameDate,c.revenuePeriod);
+   if(!c.revenueEnabled)s.nextRevenueDate='';
+ });
+ persist();render();
+}
+async function addSatellitePrompt(){
+  const options='<option value="">— '+t('noPayloadConstellation')+' —</option>'+state.constellations.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+  const body=`<div class="modalText">${lang==='pl'?'Dodaj własnego satelitę lub większą partię satelitów. Możesz od razu ustawić przychód generowany przez każdy satelitę.':'Add an owned satellite or a batch of satellites. You can configure revenue generated by each satellite.'}</div>
+  <div class="modalGrid">
+    <label class="modalField">${t('satelliteName')}<input id="newSatName" placeholder="Starlink"></label>
+    <label class="modalField">${lang==='pl'?'Liczba':'Quantity'}<input id="newSatCount" type="number" min="1" value="1"></label>
+  </div>
+  <div class="modalGrid" style="margin-top:12px">
+    <label class="modalField">${t('satelliteConstellation')}<select id="newSatConst">${options}</select></label>
+    <label class="modalField">${t('satelliteStatus')}<select id="newSatStatus"><option value="Orbital">${t('orbital')}</option><option value="Planned">${t('planned')}</option><option value="Lost">${t('lostStatus')}</option></select></label>
+  </div>
+  <div class="modalGrid" style="margin-top:12px">
+    <label class="modalField">${lang==='pl'?'Przychód na satelitę ($)':'Revenue per satellite ($)'}<input id="newSatRevenue" type="number" min="0" value="0"></label>
+    <label class="modalField">${lang==='pl'?'Okres przychodu':'Revenue period'}<select id="newSatRevenuePeriod"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select></label>
+  </div>
+  <label class="modalField" style="margin-top:12px"><span>${lang==='pl'?'Aktywuj przychód':'Enable revenue'} <input id="newSatRevenueEnabled" type="checkbox" style="width:auto;margin-left:8px"></span></label>`;
+  const r=await new Promise(resolve=>{modalResolver=resolve;openModal(t('newSatelliteTitle'),body,`<button class="secondary" type="button" onclick="closeModal(null)">${t('modalCancel')}</button><button type="button" onclick="closeModal({name:document.getElementById('newSatName').value,constellation:document.getElementById('newSatConst').value,status:document.getElementById('newSatStatus').value,count:document.getElementById('newSatCount').value,revenue:document.getElementById('newSatRevenue').value,revenuePeriod:document.getElementById('newSatRevenuePeriod').value,revenueEnabled:document.getElementById('newSatRevenueEnabled').checked})">${t('modalSave')}</button>`);setTimeout(()=>document.getElementById('newSatName')?.focus(),20);});
+  if(!r)return;
+  const name=String(r.name||'').trim(), count=Math.max(1,Math.floor(Number(r.count)||1));
+  const revenue=Math.max(0,Number(r.revenue)||0), revPeriod=r.revenuePeriod||'monthly', revEnabled=!!r.revenueEnabled&&revenue>0;
+  if(!name){await uiAlert(t('errorTitle'),lang==='pl'?'Podaj nazwę/typ satelity.':'Enter a satellite name/type.');return;}
+  const c=r.constellation?state.constellations.find(x=>x.id===r.constellation):null;
+  const base=state.satellites.filter(x=>x.constellation===(c?c.id:'')).length;
+  for(let i=0;i<count;i++){
+    const start=state.gameDate;
+    state.satellites.push({id:uid(),name:count===1?name:name+'-'+(base+i+1),constellation:c?c.id:'',status:r.status||'Orbital',owned:true,revenueAmount:revenue,revenuePeriod:revPeriod,revenueEnabled:revEnabled,nextRevenueDate:revEnabled?addPeriodToGameDate(start,revPeriod):'',revenueStartDate:start});
+  }
+  state.constellations.forEach(x=>x.satellites=state.satellites.filter(s=>s.constellation===x.id).length);
+  persist();render();toast(t('satelliteMenu'),(lang==='pl'?'Dodano '+count+' satelitów.':'Added '+count+' satellites.'));
+}
+async function editSatellite(id){
+ const s=state.satellites.find(x=>x.id===id);if(!s)return;
+ const options='<option value="">— '+t('noPayloadConstellation')+' —</option>'+state.constellations.map(c=>`<option value="${esc(c.id)}" ${s.constellation===c.id?'selected':''}>${esc(c.name)}</option>`).join('');
+ const body=`<div class="modalGrid">
+ <label class="modalField">${t('satelliteName')}<input id="esName" value="${esc(s.name)}"></label>
+ <label class="modalField">${t('satelliteStatus')}<select id="esStatus"><option value="Orbital" ${s.status==='Orbital'?'selected':''}>${t('orbital')}</option><option value="Planned" ${s.status==='Planned'?'selected':''}>${t('planned')}</option><option value="Lost" ${s.status==='Lost'?'selected':''}>${t('lostStatus')}</option></select></label>
+ </div>
+ <div class="modalGrid" style="margin-top:12px">
+ <label class="modalField">${t('satelliteConstellation')}<select id="esConst">${options}</select></label>
+ <label class="modalField">${lang==='pl'?'Przychód ($)':'Revenue ($)'}<input id="esRevenue" type="number" min="0" value="${Number(s.revenueAmount)||0}"></label>
+ </div>
+ <div class="modalGrid" style="margin-top:12px">
+ <label class="modalField">${lang==='pl'?'Okres przychodu':'Revenue period'}<select id="esRevenuePeriod"><option value="daily" ${s.revenuePeriod==='daily'?'selected':''}>Daily</option><option value="weekly" ${s.revenuePeriod==='weekly'?'selected':''}>Weekly</option><option value="monthly" ${s.revenuePeriod==='monthly'?'selected':''}>Monthly</option><option value="yearly" ${s.revenuePeriod==='yearly'?'selected':''}>Yearly</option></select></label>
+ <label class="modalField"><span>${lang==='pl'?'Aktywny przychód':'Revenue active'} <input id="esEnabled" type="checkbox" style="width:auto;margin-left:8px" ${s.revenueEnabled?'checked':''}></span></label>
+ </div>`;
+ const r=await new Promise(resolve=>{modalResolver=resolve;openModal(lang==='pl'?'Edytuj satelitę':'Edit satellite',body,`<button class="secondary" onclick="closeModal(null)">${t('modalCancel')}</button><button onclick="closeModal({name:document.getElementById('esName').value,status:document.getElementById('esStatus').value,constellation:document.getElementById('esConst').value,revenue:document.getElementById('esRevenue').value,period:document.getElementById('esRevenuePeriod').value,enabled:document.getElementById('esEnabled').checked})">${t('modalSave')}</button>`);});
+ if(!r)return;
+ s.name=String(r.name||'').trim()||s.name;s.status=r.status;s.constellation=r.constellation||'';
+ s.revenueAmount=Math.max(0,Number(r.revenue)||0);s.revenuePeriod=r.period||'monthly';s.revenueEnabled=!!r.enabled&&s.revenueAmount>0;
+ if(s.revenueEnabled&&!s.nextRevenueDate)s.nextRevenueDate=addPeriodToGameDate(state.gameDate,s.revenuePeriod);
+ if(!s.revenueEnabled)s.nextRevenueDate='';
+ state.constellations.forEach(c=>c.satellites=state.satellites.filter(x=>x.constellation===c.id).length);
+ persist();render();
+}
+function removeSatellite(id){
+ state.satellites=state.satellites.filter(s=>s.id!==id);
+ state.constellations.forEach(c=>c.satellites=state.satellites.filter(s=>s.constellation===c.id).length);
+ persist();render();
+}
+function removeConstellation(id){
+ if(state.constellations.length<=1){uiAlert(t('errorTitle'),lang==='pl'?'Musi pozostać co najmniej jedna konstelacja.':'At least one constellation must remain.');return;}
+ state.satellites=state.satellites.filter(s=>s.constellation!==id);
+ state.constellations=state.constellations.filter(c=>c.id!==id);
+ persist();render();
+}
+function renderSatellites(){
+  const list=document.getElementById('constellationList'),info=document.getElementById('satelliteInfo'),count=document.getElementById('constellationCount');
+  if(!list||!info)return;
+  state.constellations.forEach(c=>c.satellites=state.satellites.filter(s=>s.constellation===c.id).length);
+  if(count)count.textContent=state.constellations.length;
+  const constellationHtml=state.constellations.map(c=>{
+    const sats=state.satellites.filter(s=>s.constellation===c.id);
+    const shown=sats.slice(0,8);
+    const chips=shown.map(s=>`<div class="satelliteChip"><span>🛰️ ${esc(s.name)}</span><small>${esc(s.status)} ${s.revenueEnabled?`• 💰 ${money(s.revenueAmount)}/${s.revenuePeriod}`:''} <button class="miniBtn" onclick="editSatellite('${esc(s.id)}')">✏️</button><button class="miniBtn" onclick="removeSatellite('${esc(s.id)}')">✕</button></small></div>`).join('');
+    return `<div class="constellationCard">
+      <div class="constellationTop"><div><div class="constellationName">🌌 ${esc(c.name)}</div>
+      <div class="constellationMeta"><span class="typeBadge">${esc(constellationTypeLabel(c.type))}</span><span class="badge pending">${sats.length} ${t('satelliteCount')}</span>${c.revenueEnabled?`<span class="badge success">💰 ${money(c.revenuePerSatellite)}/${c.revenuePeriod}</span>`:''}</div></div>
+      <div style="display:flex;gap:5px"><button class="miniBtn" onclick="editConstellation('${esc(c.id)}')">✏️</button><button class="miniBtn danger" onclick="removeConstellation('${esc(c.id)}')">🗑️</button></div></div>
+      <div class="muted" style="margin-top:9px">${esc(c.description||'')}</div>
+      ${sats.length?`<div class="payloadSummary"><div class="satelliteBatch">🛰️ <b>${sats.length}</b> ${t('satelliteCount')}</div><div class="satelliteBatch">📦 ${lang==='pl'?'Aktywa własnej floty':'Owned fleet assets'}</div></div><div class="satelliteGrid">${chips}</div>${sats.length>8?`<div class="satelliteMore">${lang==='pl'?'Pokazano 8 rekordów z '+sats.length+'. Łączna liczba jest zachowana.':'Showing 8 records of '+sats.length+'. The full count is preserved.'}</div>`:''}`:`<div class="emptyBox" style="margin-top:12px">${t('noSatellites')}<br><button class="miniBtn" style="margin-top:9px" onclick="addSatellitePrompt()">＋ ${t('newSatelliteTitle')}</button></div>`}
+    </div>`;
+  }).join('');
+  const standalone=state.satellites.filter(s=>!s.constellation);
+  const standaloneShown=standalone.slice(0,8);
+  const standaloneChips=standaloneShown.map(s=>`<div class="satelliteChip"><span>🛰️ ${esc(s.name)}</span><small>${esc(s.status)} ${s.revenueEnabled?`• 💰 ${money(s.revenueAmount)}/${s.revenuePeriod}`:''} <button class="miniBtn" onclick="editSatellite('${esc(s.id)}')">✏️</button><button class="miniBtn" onclick="removeSatellite('${esc(s.id)}')">✕</button></small></div>`).join('');
+  const standaloneHtml=standalone.length?`<div class="constellationCard"><div class="constellationTop"><div><div class="constellationName">🛰️ ${lang==='pl'?'Pojedyncze satelity własne':'Owned individual satellites'}</div><div class="constellationMeta"><span class="typeBadge">${lang==='pl'?'Poza konstelacją':'No constellation'}</span><span class="badge pending">${standalone.length} ${t('satelliteCount')}</span></div></div></div><div class="satelliteGrid">${standaloneChips}</div>${standalone.length>8?`<div class="satelliteMore">${lang==='pl'?'Pokazano 8 rekordów z '+standalone.length+'.':'Showing 8 records of '+standalone.length+'.'}</div>`:''}</div>`:'';
+  list.innerHTML=constellationHtml+standaloneHtml;
+  info.innerHTML=`<div class="kpi"><span>${t('satelliteMenu')}</span><b>${state.constellations.length}</b></div><div class="kpi"><span>${t('satellites')}</span><b>${state.satellites.length}</b></div><div class="kpi"><span>${lang==='pl'?'Pojedyncze satelity':'Individual satellites'}</span><b>${standalone.length}</b></div><div class="notice" style="margin-top:10px">${lang==='pl'?'Lot z typem „Satelity konstelacji” zwiększa wybraną konstelację. „Pojedyncze satelity własne” trafiają do osobnej puli. „Ładunek klienta” jest tylko zapisany przy locie i nie staje się Twoim aktywem.':'A “Constellation satellites” flight increases the selected constellation. “Owned individual satellites” go to a separate pool. “Customer payload” stays attached to the flight and does not become your asset.'}</div>`;
+}
+function parseGameDate(v){
+ const m=/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/.exec(String(v||''));
+ if(!m)return null;
+ const d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));
+ if(d.getFullYear()!==Number(m[1])||d.getMonth()!==Number(m[2])-1||d.getDate()!==Number(m[3]))return null;
+ return d;
+}
+function formatGameDate(v){
+ const d=parseGameDate(v); if(!d)return '—';
+ return d.toLocaleDateString(lang==='pl'?'pl-PL':'en-US',{year:'numeric',month:'long',day:'numeric'});
+}
+function daysBetweenGameDates(a,b){
+ const da=parseGameDate(a),db=parseGameDate(b); if(!da||!db)return 0;
+ return Math.round((Date.UTC(db.getFullYear(),db.getMonth(),db.getDate())-Date.UTC(da.getFullYear(),da.getMonth(),da.getDate()))/86400000);
+}
+function toggleLang(){lang=lang==='pl'?'en':'pl';render()}
+function localizedProgramLabel(v){
+ const m={Starlink:'programStarlink','Earth Observation':'programEarth','Lunar':'programLunar','Mars':'programMars','Heavy Launch':'programHeavy','Other':'programOther'};
+ return t(m[v]||'programOther');
+}
+function localizedResultLabel(v){return v==='success'?'✅ '+t('success'):v==='failure'?'❌ '+t('failure'):v;}
+function localizedRecoveryLabel(v){return v==='recovered'?'♻️ '+t('recovered'):v==='lost'?'💥 '+t('lost'):v==='unknown'?'❔ '+t('unknown'):v;}
+function localizedStatus(v){
+ const m={'Nowy':'statusNew','Odzyskany':'statusRecovered','Utracony':'statusLost','Po locie':'statusAfterFlight','Zużyty':'statusUsed'};
+ return t(m[v]||'unknown');
+}
+function applyFlightSelectTranslations(){
+ const sf=document.getElementById('fShipFate');if(sf){Array.from(sf.options).forEach(o=>{o.textContent=o.value==='survived'?(lang==='pl'?'Przetrwał lądowanie':'Survived landing'):(lang==='pl'?'Zniszczony':'Destroyed')})}
+ const program=document.getElementById('fProgram');
+ if(program) Array.from(program.options).forEach(o=>o.textContent=localizedProgramLabel(o.value));
+ const result=document.getElementById('fResult');
+ if(result) Array.from(result.options).forEach(o=>o.textContent=localizedResultLabel(o.value));
+ const recovery=document.getElementById('fRecovery');
+ if(recovery) Array.from(recovery.options).forEach(o=>o.textContent=localizedRecoveryLabel(o.value));
+}
+function applyStatic(){
+ applyFlightSelectTranslations();applyPayloadSelectTranslations();
+ document.querySelectorAll('[data-t]').forEach(el=>{
+   const k=el.getAttribute('data-t');
+   if(!el)return;
+   // Labels contain an input/select/textarea. Changing label.textContent would
+   // delete that control from the DOM. Only replace the label's first text node.
+   if(el.tagName==='LABEL'){
+     const text=t(k);
+     if(el.firstChild&&el.firstChild.nodeType===3) el.firstChild.nodeValue=text;
+     else el.insertBefore(document.createTextNode(text),el.firstChild||null);
+   }else{
+     el.textContent=t(k);
+   }
+ });
+ /* subtitle intentionally removed */
+ setText('saveHint',t('saveHint'));
+ setText('langBtn',lang==='pl'?'EN':'PL');
+ setText('flightNotice',t('flightNotice'));
+ setText('payloadNotice',t('payloadNotice'));
+ setText('constellationNotice',t('constellationNotice'));
+ setText('boosterNotice',t('boosterNotice'));
+ setText('shipNotice',t('shipNotice'));
+ setText('productionNotice',t('productionNotice'));
+ setHTML('exampleText',lang==='pl'?'<b>Lunar Satellite Deployment</b><br>3 loty na orbitę Księżyca<br>3 satelity łącznie<br>💰 $50 000 000 dopiero po wykonaniu całego programu.':'<b>Lunar Satellite Deployment</b><br>3 flights to lunar orbit<br>3 satellites total<br>💰 $50,000,000 only after the whole program is completed.');
+ setText('priceSource',t('productionSource'));
+}
+
+function toggleCompactNumbers(){state.settings.compactNumbers=document.getElementById('compactNumbers').checked;persist();render();}
+function toggleConfirmProduction(){state.settings.confirmProduction=document.getElementById('confirmProduction').checked;persist();}
+function setText(id,value){
+ const el=document.getElementById(id);
+ if(el)el.textContent=String(value??'');
+}
+function setHTML(id,value){
+ const el=document.getElementById(id);
+ if(el)el.innerHTML=value;
+}
+function renderGameDateUI(){
+ setText('gameDateDisplay',formatGameDate(state.gameDate));
+ setText('gameDateInfo',t('gameDateInfo'));
+ const start=document.getElementById('recStart');
+ if(start)start.value=state.gameDate;
+}
+function render(){
+ state=migrate(state,SAVE_VERSION);
+
+ // Static labels are cosmetic; never let them block state rendering.
+ try{applyStatic()}catch(err){console.error('Static UI render error',err)}
+
+ // Always refresh the global counters directly from state.
+ setText('funds',money(state.funds));
+ setText('launches',state.flights.filter(x=>x.result==='success').length);
+ setText('sats',state.satellites.length);
+ setText('activeContractsCount',state.contracts.filter(x=>!x.completed).length);
+ setText('profileName',state.name);
+ renderGameDateUI();
+
+ // Each panel is rendered independently so one malformed legacy record
+ // cannot blank every other panel.
+ const panels=[
+   ['fleet',renderFleet],
+   ['production',renderProduction],
+   ['finance',renderFinance],
+   ['contracts',renderContracts],
+   ['history',renderHistory],
+   ['dashboard',renderDash],
+   ['satellites',renderSatellites],
+   ['selects',fillSelects]
+ ];
+ panels.forEach(([name,fn])=>{
+   try{fn()}catch(err){
+     console.error('Render error in '+name,err);
+     const map={dashboard:'dashHistory',contracts:'contractList',satellites:'constellationList',finance:'financeSummary',history:'historyList'};
+     if(map[name])setHTML(map[name],'<div class="empty">UI render error. The saved data is still preserved.</div>');
+   }
+ });
+
+ const compact=document.getElementById('compactNumbers');
+ const confirm=document.getElementById('confirmProduction');
+ if(compact)compact.checked=!!state.settings.compactNumbers;
+ if(confirm)confirm.checked=!!state.settings.confirmProduction;
+
+ // Keep the currently selected page; rendering must never navigate the user.
+ const active=document.querySelector('.page.active');
+ if(!active){
+   const dash=document.getElementById('dashboard');
+   if(dash)dash.classList.add('active');
+ }
+}
+
+function tab(id,btn){const page=document.getElementById(id);if(!page)return;document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));page.classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active')}
+function addBooster(){
+ const model=document.getElementById('bModel')?.value||BOOSTER_MODELS[0],name=(document.getElementById('bName')?.value||'').trim()||model+' '+(state.boosters.length+1),product=getProduct(model),cost=Number(product?.price)||0;
+ if(state.funds<cost){uiAlert(t('errorTitle'),(lang==='pl'?'Za mały budżet. Koszt: ':'Insufficient funds. Cost: ')+money(cost));return;}
+ state.funds-=cost;state.boosters.push({id:uid(),model,name,flights:0,status:'Nowy'});addFin('Fleet purchase: '+model,-cost);
+ const n=document.getElementById('bName');if(n)n.value='';persist();render();
+}
+function addShip(){
+ const model=document.getElementById('sModel')?.value||SHIP_MODELS[0],name=(document.getElementById('sName')?.value||'').trim()||model+' '+(state.ships.length+1),product=getProduct(model),cost=Number(product?.price)||0;
+ if(state.funds<cost){uiAlert(t('errorTitle'),(lang==='pl'?'Za mały budżet. Koszt: ':'Insufficient funds. Cost: ')+money(cost));return;}
+ state.funds-=cost;state.ships.push({id:uid(),model,name,flights:0,status:'Nowy'});addFin('Fleet purchase: '+model,-cost);
+ const n=document.getElementById('sName');if(n)n.value='';persist();render();
+}
+function syncFleetStatuses(){
+ state.boosters.forEach(b=>{if(!b.status)b.status='Nowy';});
+ state.ships.forEach(s=>{if(!s.status)s.status='Nowy';});
+}
+
+function renderFleet(){
+ const bEl=document.getElementById('boosters'),sEl=document.getElementById('ships');
+ if(bEl)bEl.innerHTML=state.boosters.length?state.boosters.map(b=>`<div class="item" style="margin-bottom:8px"><b>${esc(b.name)}</b><span class="muted">${esc(b.model)} • ${b.flights} ${t('flights')} • ${t('status')}: ${esc(localizedStatus(b.status))}</span></div>`).join(''):'<div class="empty">'+t('noBoosters')+'</div>';
+ if(sEl)sEl.innerHTML=state.ships.length?state.ships.map(x=>`<div class="item" style="margin-bottom:8px"><b>${esc(x.name)}</b><span class="muted">${esc(x.model)} • ${x.flights} ${t('flights')} • ${t('status')}: ${esc(localizedStatus(x.status))}${x.status==='Zużyty'?' • '+(lang==='pl'?'nieaktywny':'inactive'):''}</span></div>`).join(''):'<div class="empty">'+t('noShips')+'</div>';
+}
+function fillSelects(){
+ document.getElementById('boosters').innerHTML=state.boosters.length?state.boosters.map(b=>`<div class="item" style="margin-bottom:8px"><b>${esc(b.name)}</b><span class="muted">${esc(b.model)} • ${b.flights} ${t('flights')} • ${t('status')}: ${esc(localizedStatus(b.status))}</span></div>`).join(''):'<div class="empty">'+t('noBoosters')+'</div>';
+ document.getElementById('ships').innerHTML=state.ships.length?state.ships.map(s=>`<div class="item" style="margin-bottom:8px"><b>${esc(s.name)}</b><span class="muted">${esc(s.model)} • ${s.flights} ${t('flights')} • ${t('status')}: ${esc(localizedStatus(s.status))}</span></div>`).join(''):'<div class="empty">'+t('noShips')+'</div>';
+}
+function fillSelects(){
+  const bModel=document.getElementById('bModel');if(bModel)bModel.innerHTML=BOOSTER_MODELS.map(x=>`<option>${x}</option>`).join('');
+  const sModel=document.getElementById('sModel');if(sModel)sModel.innerHTML=SHIP_MODELS.map(x=>`<option>${x}</option>`).join('');
+  document.getElementById('fBooster').innerHTML=state.boosters.filter(b=>b.status!=='Utracony').map(b=>`<option value="${b.id}">${esc(b.name)} — ${esc(b.model)} — ${t('launch')} #${b.flights+1}</option>`).join('')||'<option value="">'+t('noBoosters')+'</option>';
+  document.getElementById('fShip').innerHTML=state.ships.filter(s=>s.status!=='Zużyty').map(s=>`<option value="${s.id}">${esc(s.name)} — ${esc(s.model)} — ${t('launch')} #${s.flights+1}</option>`).join('')||'<option value="">'+t('noShips')+'</option>';
+  document.getElementById('fContract').innerHTML='<option value="">— '+(lang==='pl'?'brak programu':'no program')+' —</option>'+state.contracts.filter(c=>!c.completed).map(c=>`<option value="${esc(c.id)}">${esc(c.name)} — ${c.flights}/${c.required} ${t('flights')}</option>`).join('');
+  const pc=document.getElementById('fPayloadConst');
+  if(pc)pc.innerHTML='<option value="">— '+t('noPayloadConstellation')+' —</option>'+state.constellations.map(c=>`<option value="${esc(c.id)}">${esc(c.name)} (${state.satellites.filter(s=>s.constellation===c.id).length})</option>`).join('');
+  updatePayloadFields();
+}
+function applyPayloadSelectTranslations(){
+ const mode=document.getElementById('fPayloadMode');
+ if(mode){
+   const labels={
+     none:t('payloadNone'),
+     constellation:t('payloadConstellationMode'),
+     individual:t('payloadIndividualMode'),
+     customer:t('payloadCustomerMode')
+   };
+   Array.from(mode.options).forEach(o=>{if(labels[o.value])o.textContent=labels[o.value]});
+ }
+}
+function updatePayloadFields(){
+  const mode=document.getElementById('fPayloadMode')?.value||'none';
+  const cf=document.getElementById('payloadConstellationField'),nf=document.getElementById('payloadNameField');
+  if(cf)cf.style.display=mode==='constellation'?'block':'none';
+  if(nf)nf.style.display=mode==='none'?'none':'block';
+  const name=document.getElementById('fPayloadName');
+  if(name){
+    name.placeholder=mode==='individual'?(lang==='pl'?'np. WeatherSat':'e.g. WeatherSat'):mode==='customer'?(lang==='pl'?'np. NASA cargo':'e.g. NASA cargo'):'Starlink';
+  }
+}
+function addFlight(){
+  let b=state.boosters.find(x=>x.id===document.getElementById('fBooster').value),s=state.ships.find(x=>x.id===document.getElementById('fShip').value),result=document.getElementById('fResult').value;
+  if(!b||!s){uiAlert(t('errorTitle'),lang==='pl'?'Najpierw dodaj dostępny booster i ship.':'Add an available booster and ship first.');return;}
+  const payloadMode=document.getElementById('fPayloadMode')?.value||'none';
+  const satCount=Math.max(0,Math.floor(+document.getElementById('fSats').value||0));
+  const payloadConst=document.getElementById('fPayloadConst')?.value||'';
+  const payloadName=document.getElementById('fPayloadName')?.value.trim()||'';
+  const shipFate=document.getElementById('fShipFate')?.value||'destroyed';
+  if(payloadMode!=='none'&&satCount<1){uiAlert(t('errorTitle'),lang==='pl'?'Podaj liczbę większą od 0.':'Enter a quantity greater than 0.');return;}
+  if(payloadMode==='constellation'&&!payloadConst){uiAlert(t('errorTitle'),lang==='pl'?'Wybierz konstelację.':'Choose a constellation.');return;}
+  if((payloadMode==='individual'||payloadMode==='customer')&&!payloadName){uiAlert(t('errorTitle'),lang==='pl'?'Podaj nazwę/typ ładunku.':'Enter a payload name/type.');return;}
+  b.flights++;s.flights++;
+  s.status=shipFate==='survived'?'Gotowy':'Zużyty';
+  b.status=document.getElementById('fRecovery').value==='recovered'?'Odzyskany':document.getElementById('fRecovery').value==='lost'?'Utracony':'Po locie';
+  let m={id:uid(),date:state.gameDate,name:document.getElementById('fName').value.trim()||'KSA-'+String(state.flights.length+1).padStart(3,'0'),program:document.getElementById('fProgram').value,booster:b.name,boosterModel:b.model,boosterFlight:b.flights,ship:s.name,shipModel:s.model,shipFlight:s.flights,shipFate,destination:document.getElementById('fDestination').value.trim()||t('unknownDestination'),sats:satCount,payloadMode,payloadName,payloadConstellation:payloadMode==='constellation'?payloadConst:'',result,recovery:document.getElementById('fRecovery').value,income:+document.getElementById('fIncome').value||0,cost:+document.getElementById('fCost').value||0,notes:document.getElementById('fNotes').value.trim(),contract:document.getElementById('fContract').value};
+  state.flights.unshift(m);state.funds+=m.income-m.cost;if(m.income)addFin('Flight income: '+m.name,m.income);if(m.cost)addFin('Flight cost: '+m.name,-m.cost);
+  if(m.result==='success'&&m.sats>0){
+    if(m.payloadMode==='constellation'){
+      const c=state.constellations.find(x=>x.id===m.payloadConstellation);
+      if(c){const base=state.satellites.filter(x=>x.constellation===c.id).length;for(let i=1;i<=m.sats;i++)state.satellites.push({id:uid(),name:c.name+'-'+(base+i),constellation:c.id,status:'Orbital',sourceFlight:m.id,owned:true,revenueAmount:Number(c.revenuePerSatellite)||0,revenuePeriod:c.revenuePeriod||'monthly',revenueEnabled:!!c.revenueEnabled&&Number(c.revenuePerSatellite)>0,nextRevenueDate:c.revenueEnabled&&Number(c.revenuePerSatellite)>0?addPeriodToGameDate(state.gameDate,c.revenuePeriod||'monthly'):'',revenueStartDate:state.gameDate});c.satellites=state.satellites.filter(x=>x.constellation===c.id).length;}
+    }else if(m.payloadMode==='individual'){
+      const base=state.satellites.filter(x=>!x.constellation).length;for(let i=1;i<=m.sats;i++)state.satellites.push({id:uid(),name:m.sats===1?m.payloadName:m.payloadName+'-'+(base+i),constellation:'',status:'Orbital',sourceFlight:m.id,owned:true,revenueAmount:0,revenuePeriod:'monthly',revenueEnabled:false,nextRevenueDate:'',revenueStartDate:state.gameDate});
+    }else if(m.payloadMode==='customer'){toast(t('newFlight'),(lang==='pl'?'Ładunek klienta zarejestrowany: ':'Customer payload registered: ')+m.payloadName+' × '+m.sats);}
+  }
+  if(m.contract&&result==='success')updateContract(m);
+  clearFlight();persist();render();
+}
+function clearFlight(){
+  ['fName','fDestination','fNotes','fPayloadName'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['fSats','fIncome','fCost'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=0;});
+  const pc=document.getElementById('fPayloadConst');if(pc)pc.value='';
+  const pm=document.getElementById('fPayloadMode');if(pm)pm.value='none';
+  updatePayloadFields();
+}
+function updateContract(m){let c=state.contracts.find(x=>x.id===m.contract);if(!c)return;c.flights++;c.sats+=m.sats;if(c.flights>=c.required&&c.sats>=c.requiredSats&&!c.completed){c.completed=true;state.funds+=c.reward;addFin('Reward: '+c.name,c.reward);toast(t('programs'),(lang==='pl'?'Program ukończony: ':'Program completed: ')+c.name);}else if(c.perFlight){state.funds+=c.perFlight;addFin('Bonus: '+c.name,c.perFlight)}}
+function finance(direction){
+ const descEl=document.getElementById('finDesc'),amountEl=document.getElementById('finAmount');
+ const desc=(descEl?.value||'').trim(),amount=Math.abs(Number(amountEl?.value)||0);
+ if(!amount){uiAlert(t('errorTitle'),lang==='pl'?'Podaj kwotę.':'Enter an amount.');return;}
+ const signed=direction>=0?amount:-amount;
+ state.funds+=signed;
+ addFinAt(desc||(direction>=0?(lang==='pl'?'Dodanie pieniędzy':'Money added'):(lang==='pl'?'Wydatek':'Expense')),signed,state.gameDate);
+ if(descEl)descEl.value='';if(amountEl)amountEl.value='';
+ persist();
+ renderFinance();
+ try{render()}catch(err){console.error('Post-finance render error',err);renderFinance();}
+ toast(t('finance'),direction>=0?(lang==='pl'?'Dodano '+money(amount)+'.':'Added '+money(amount)+'.'):(lang==='pl'?'Odjęto '+money(amount)+'.':'Removed '+money(amount)+'.'));
+}
+function addFinAt(desc,amount,date){state.finance.unshift({id:uid(),date,desc,amount})}
+function addFin(desc,amount){addFinAt(desc,amount,state.gameDate)}
+function addPeriodToGameDate(dateStr,period){const d=parseGameDate(dateStr);if(!d)return dateStr;let y=d.getFullYear(),m=d.getMonth(),day=d.getDate();if(period==='daily')d.setDate(day+1);else if(period==='weekly')d.setDate(day+7);else if(period==='monthly'){m++;const last=new Date(y,m+1,0).getDate();d.setFullYear(y,m,Math.min(day,last));}else if(period==='yearly'){y++;const last=new Date(y,1,0).getDate();d.setFullYear(y,0,Math.min(day,last));}return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function settleRecurring(fromDate,toDate){
+ let total=0,count=0,details=[];
+ if(!Array.isArray(state.recurring))state.recurring=[];
+ state.recurring.forEach(r=>{
+   if(!r.active||r.amount<=0)return;
+   let guard=0;
+   while(r.nextDueDate&&daysBetweenGameDates(r.nextDueDate,toDate)>=0&&guard<10000){
+     const signed=r.type==='expense'?-Math.abs(r.amount):Math.abs(r.amount);
+     state.funds+=signed;
+     addFinAt((r.type==='expense'?'Recurring expense: ':'Recurring income: ')+r.name,signed,r.nextDueDate);
+     total+=signed;count++;details.push({date:r.nextDueDate,name:r.name,amount:signed});
+     r.nextDueDate=addPeriodToGameDate(r.nextDueDate,r.period);
+     guard++;
+   }
+ });
+
+ // Satellite income is generated from each active satellite's own settings.
+ // Entries are grouped so a constellation of hundreds of satellites does not
+ // create hundreds of identical lines in the transaction log.
+ const groups={};
+ state.satellites.forEach(s=>{
+   if(!s.revenueEnabled||Number(s.revenueAmount)<=0||s.status==='Lost')return;
+   if(!s.nextRevenueDate){
+     s.nextRevenueDate=s.revenueStartDate||addPeriodToGameDate(fromDate,s.revenuePeriod||'monthly');
+   }
+   let guard=0;
+   while(s.nextRevenueDate&&daysBetweenGameDates(s.nextRevenueDate,toDate)>=0&&guard<10000){
+     const cid=s.constellation||'';
+     const c=state.constellations.find(x=>x.id===cid);
+     const label=c?c.name:s.name;
+     const key=[s.nextRevenueDate,s.revenueAmount,s.revenuePeriod,label].join('|');
+     if(!groups[key])groups[key]={date:s.nextRevenueDate,amount:0,units:0,label};
+     groups[key].amount+=Number(s.revenueAmount);
+     groups[key].units++;
+     s.nextRevenueDate=addPeriodToGameDate(s.nextRevenueDate,s.revenuePeriod||'monthly');
+     guard++;
+   }
+ });
+ Object.values(groups).forEach(g=>{
+   state.funds+=g.amount;
+   const desc=(lang==='pl'?'Przychód satelitarny: ':'Satellite revenue: ')+g.label+(g.units>1?' × '+g.units:'');
+   addFinAt(desc,g.amount,g.date);
+   total+=g.amount;count++;
+   details.push({date:g.date,name:desc,amount:g.amount});
+ });
+ return {total,count,details};
+}
+async function changeGameDate(){
+ const current=state.gameDate||'2020-01-01';
+ const r=await uiPrompt(t('changeDate'),t('changeDateText'),current,t('gameDate'));if(r===null)return;
+ const next=String(r).trim(),nd=parseGameDate(next);if(!nd){await uiAlert(t('errorTitle'),t('invalidDate'));return;}
+ const diff=daysBetweenGameDates(current,next);if(diff<0){await uiAlert(t('errorTitle'),t('pastDate'));return;}if(diff===0){await uiAlert(t('alertTitle'),t('sameDate'));return;}
+ const settlement=settleRecurring(current,next);state.gameDate=next;persist();render();
+ const net=settlement.total;
+ const msg=lang==='pl'?`Minęło ${diff} dni. ${settlement.count?`Rozliczono ${settlement.count} operacji cyklicznych. Bilans: ${net>=0?'+':''}${money(net)}.`:'Brak zaległych operacji cyklicznych.'}`:`${diff} days passed. ${settlement.count?`${settlement.count} recurring operations settled. Net: ${net>=0?'+':''}${money(net)}.`:'No recurring operations were due.'}`;
+ document.getElementById('gameDateDelta').textContent=msg;toast(t('settlement'),msg);
+}
+function renderRecurringList(){
+ const rr=document.getElementById('recurringList');
+ if(!rr)return;
+ rr.innerHTML=state.recurring.length
+  ? state.recurring.map(r=>`<div class="item recurringItem" style="margin-bottom:8px">
+      <div class="recurringTop"><div><b>${esc(r.name)}</b> ${r.active?'<span class="badge success">'+t('recurringActive')+'</span>':'<span class="badge pending">'+t('deactivate')+'</span>'}</div></div>
+      <span class="muted">${r.type==='income'?t('recurringIncome'):t('recurringExpense')} • ${money(r.amount)} • ${t(r.period)} • ${t('recurringNext')}: ${formatGameDate(r.nextDueDate)}</span>
+      <div class="actions" style="margin-top:8px">
+       <button class="small secondary" onclick="editRecurring('${esc(r.id)}')">✏️ ${lang==='pl'?'Edytuj':'Edit'}</button>
+       ${r.active?`<button class="small secondary" onclick="disableRecurring('${esc(r.id)}')">${t('deactivate')}</button>`:''}
+       <button class="small danger" onclick="deleteRecurring('${esc(r.id)}')">🗑️ ${lang==='pl'?'Usuń':'Delete'}</button>
+      </div>
+    </div>`).join('')
+  : '<div class="empty">'+t('noRecurring')+'</div>';
+}
+function renderFinance(){
+ let inc=state.finance.filter(x=>x.amount>0).reduce((a,x)=>a+x.amount,0);
+ let out=state.finance.filter(x=>x.amount<0).reduce((a,x)=>a-x.amount,0);
+ const summary=document.getElementById('financeSummary');
+ if(summary)summary.innerHTML=`<div class="kpi"><span>${t('budget')}</span><b>${money(state.funds)}</b></div><div class="kpi"><span>${t('incomeTotal')}</span><b>${money(inc)}</b></div><div class="kpi"><span>${t('expensesTotal')}</span><b>${money(out)}</b></div>`;
+ renderRecurringList();
+ const history=document.getElementById('finHistory');
+ if(history)history.innerHTML=state.finance.length
+  ? `<table><tr><th>${t('date')}</th><th>${t('description')}</th><th>${t('amount')}</th></tr>${state.finance.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.desc)}</td><td class="${x.amount>=0?'success':'failure'}">${x.amount>=0?'+':''}${money(x.amount)}</td></tr>`).join('')}</table>`
+  : '<div class="empty">'+t('noFinance')+'</div>';
+ const startInput=document.getElementById('recStart');
+ if(startInput&&!startInput.value)startInput.value=state.gameDate;
+ const notice=document.getElementById('recurringNotice');
+ if(notice)notice.textContent=t('recurringNotice');
+}
+function addRecurring(){
+ const name=(document.getElementById('recName')?.value||'').trim();
+ const amount=Math.max(0,Number(document.getElementById('recAmount')?.value)||0);
+ const type=document.getElementById('recType')?.value==='expense'?'expense':'income';
+ const period=document.getElementById('recPeriod')?.value||'monthly';
+ const startDate=(document.getElementById('recStart')?.value||state.gameDate);
+ if(!name||amount<=0){
+   uiAlert(t('errorTitle'),lang==='pl'?'Podaj nazwę i kwotę większą od zera.':'Enter a name and an amount greater than zero.');
+   return;
+ }
+ if(!parseGameDate(startDate)){
+   uiAlert(t('errorTitle'),t('invalidDate'));
+   return;
+ }
+ if(daysBetweenGameDates(state.gameDate,startDate)<0){
+   uiAlert(t('errorTitle'),lang==='pl'?'Data startu nie może być wcześniejsza niż data gry.':'Start date cannot be earlier than the current game date.');
+   return;
+ }
+ if(!['daily','weekly','monthly','yearly'].includes(period)){
+   uiAlert(t('errorTitle'),lang==='pl'?'Nieprawidłowy okres.':'Invalid period.');
+   return;
+ }
+ if(!Array.isArray(state.recurring))state.recurring=[];
+ const item={
+   id:uid(),name,type,amount,period,startDate,
+   nextDueDate:addPeriodToGameDate(startDate,period),
+   active:true,sourceType:'manual',sourceId:''
+ };
+ state.recurring.unshift(item);
+ const n=document.getElementById('recName'),a=document.getElementById('recAmount'),s=document.getElementById('recStart');
+ if(n)n.value='';
+ if(a)a.value='';
+ if(s)s.value=state.gameDate;
+ persist();
+
+ // The new row is rendered immediately, then the rest of the UI is refreshed
+ // separately. No other page can prevent the recurring item from appearing.
+ renderRecurringList();
+ try{render()}catch(err){console.error('Post-recurring render error',err);renderRecurringList();}
+ toast(t('finance'),lang==='pl'?'Dodano płatność cykliczną.':'Recurring payment added.');
+}
+async function editRecurring(id){
+ const r=state.recurring.find(x=>x.id===id);
+ if(!r)return;
+ const body=`<div class="modalGrid">
+   <label class="modalField">${lang==='pl'?'Nazwa':'Name'}<input id="erName" value="${esc(r.name)}"></label>
+   <label class="modalField">${lang==='pl'?'Kwota za okres ($)':'Amount per period ($)'}<input id="erAmount" type="number" min="0" step="1" value="${Number(r.amount)||0}"></label>
+ </div>
+ <div class="modalGrid" style="margin-top:12px">
+   <label class="modalField">${lang==='pl'?'Typ':'Type'}<select id="erType">
+     <option value="income" ${r.type==='income'?'selected':''}>${lang==='pl'?'Przychód':'Income'}</option>
+     <option value="expense" ${r.type==='expense'?'selected':''}>${lang==='pl'?'Wydatek':'Expense'}</option>
+   </select></label>
+   <label class="modalField">${lang==='pl'?'Okres':'Period'}<select id="erPeriod">
+     <option value="daily" ${r.period==='daily'?'selected':''}>${t('daily')}</option>
+     <option value="weekly" ${r.period==='weekly'?'selected':''}>${t('weekly')}</option>
+     <option value="monthly" ${r.period==='monthly'?'selected':''}>${t('monthly')}</option>
+     <option value="yearly" ${r.period==='yearly'?'selected':''}>${t('yearly')}</option>
+   </select></label>
+ </div>
+ <label class="modalField" style="margin-top:12px">${lang==='pl'?'Następny termin':'Next due'}<input id="erNext" type="date" value="${esc(r.nextDueDate||state.gameDate)}"></label>`;
+ const result=await new Promise(resolve=>{
+   modalResolver=resolve;
+   openModal(lang==='pl'?'Edytuj płatność cykliczną':'Edit recurring payment',body,
+    `<button class="secondary" onclick="closeModal(null)">${t('modalCancel')}</button>
+     <button onclick="closeModal({
+       name:document.getElementById('erName').value,
+       amount:document.getElementById('erAmount').value,
+       type:document.getElementById('erType').value,
+       period:document.getElementById('erPeriod').value,
+       nextDueDate:document.getElementById('erNext').value
+     })">${t('modalSave')}</button>`);
+ });
+ if(!result)return;
+ const name=String(result.name||'').trim();
+ const amount=Math.max(0,Number(result.amount)||0);
+ if(!name||amount<=0){
+   uiAlert(t('errorTitle'),lang==='pl'?'Nazwa i kwota muszą być poprawne.':'Name and amount must be valid.');
+   return;
+ }
+ if(!parseGameDate(result.nextDueDate)){
+   uiAlert(t('errorTitle'),t('invalidDate'));
+   return;
+ }
+ r.name=name;
+ r.amount=amount;
+ r.type=result.type==='expense'?'expense':'income';
+ r.period=['daily','weekly','monthly','yearly'].includes(result.period)?result.period:'monthly';
+ r.nextDueDate=result.nextDueDate;
+ r.active=true;
+ persist();
+ renderFinance();
+ try{render()}catch(err){console.error('Post-edit render error',err);renderFinance();}
+ toast(t('finance'),lang==='pl'?'Płatność cykliczna została zaktualizowana.':'Recurring payment updated.');
+}
+
+function disableRecurring(id){const r=state.recurring.find(x=>x.id===id);if(!r)return;r.active=false;persist();render();}
+
+function isVehicleProduct(x){return x.c==='Ship'||x.c==='Booster'}
+function renderProductRows(list){
+ return list.map(x=>{
+   const idx=PRODUCTS.indexOf(x);
+   const d=state.production[x.n]||{};
+   const customPrice=Number(d.price);
+   const price=(Number.isFinite(customPrice)&&customPrice>0)?customPrice:x.p;
+   const stock=Number(d.stock)||0;
+   const catClass=x.c==='Ship'?'ship':x.c==='Booster'?'booster':'infra';
+   const destroy=(stock>0&&!isVehicleProduct(x))
+     ?`<button class="small danger" onclick="destroyProduction(${idx})">🗑️ ${lang==='pl'?'Zniszcz 1':'Destroy 1'}</button>`:'';
+   return `<tr class="productRow">
+     <td><div class="productName"><span class="productIcon">${x.c==='Ship'?'🛸':x.c==='Booster'?'🚀':'🏗️'}</span><div><b>${esc(x.n)}</b><span class="productCategory ${catClass}">${esc(x.c)}</span></div></div></td>
+     <td>${esc(x.c)}</td>
+     <td class="priceCell">${money(x.p)}</td>
+     <td><input id="pc${idx}" class="priceInput" type="number" min="0" step="1000" value="${price}"></td>
+     <td><span class="stockBadge ${stock>0?'hasStock':''}">${isVehicleProduct(x)?'—':stock}</span></td>
+     <td><div class="productActions">
+       <button class="small good" onclick="produce(${idx})">${t('build')}</button>
+       <button class="small secondary" onclick="setPrice(${idx})">${t('setPrice')}</button>
+       ${destroy}
+     </div></td>
+   </tr>`;
+ }).join('');
+}
+
+function renderProduction(){
+ const vehicles=PRODUCTS.filter(isVehicleProduct);
+ const infra=PRODUCTS.filter(x=>!isVehicleProduct(x));
+ const allStock=PRODUCTS.reduce((sum,x)=>sum+(Number((state.production[x.n]||{}).stock)||0),0);
+ const activeItems=PRODUCTS.filter(x=>Number((state.production[x.n]||{}).stock)||0).length;
+ const catalogValue=PRODUCTS.reduce((sum,x)=>{
+   const d=state.production[x.n]||{};
+   return sum+(Number(d.stock)||0)*(Number(d.price)||x.p);
+ },0);
+ const stats=document.getElementById('productionStats');
+ if(stats){
+   stats.innerHTML=`
+    <div class="productionStat"><span>📦</span><div><small>${lang==='pl'?'Elementy na stanie':'Items in stock'}</small><b>${allStock}</b></div></div>
+    <div class="productionStat"><span>🧰</span><div><small>${lang==='pl'?'Typy posiadanych elementów':'Item types owned'}</small><b>${activeItems}/${PRODUCTS.length}</b></div></div>
+    <div class="productionStat"><span>💰</span><div><small>${lang==='pl'?'Wartość zapasów':'Inventory value'}</small><b>${money(catalogValue)}</b></div></div>`;
+ }
+ const vc=document.getElementById('vehicleCatalog'),ic=document.getElementById('infrastructureCatalog');
+ if(vc)vc.innerHTML=renderProductRows(vehicles);
+ if(ic)ic.innerHTML=renderProductRows(infra);
+ const ps=document.getElementById('priceSource');if(ps)ps.textContent=t('productionSource');
+}
+
+function destroyProduction(i){
+ const x=PRODUCTS[i],d=state.production[x.n]||{price:x.p,stock:0};
+ const stock=Math.max(0,Number(d.stock)||0);
+ if(stock<=0){toast(t('production'),lang==='pl'?'Brak tego elementu na stanie.':'No units of this item are in stock.');return;}
+ d.stock=stock-1;d.price=(Number(d.price)>0?Number(d.price):x.p);
+ state.production[x.n]=d;
+ persist();renderProduction();
+ toast(t('production'),lang==='pl'?'Usunięto 1 element z magazynu.':'Removed 1 item from inventory.');
+}
+
+function setPrice(i){let x=PRODUCTS[i],v=Math.max(0,+document.getElementById('pc'+i).value||0);state.production[x.n]=state.production[x.n]||{price:x.p,stock:0};state.production[x.n].price=v;persist();renderProduction()}
+async function produce(i){
+ let x=PRODUCTS[i],d=state.production[x.n]||{price:x.p,stock:0};
+ if(!Number.isFinite(Number(d.price))||Number(d.price)<=0)d.price=x.p;
+ let v=Math.max(0,Number(d.price)||x.p);d.price=v;
+ if(state.settings.confirmProduction&&v>=10000000&&!await uiConfirm(t('confirmTitle'),(lang==='pl'?'Wyprodukować '+x.n+' za ':'Produce '+x.n+' for ')+money(v)+'?'))return;
+ if(state.funds<v){uiAlert(t('errorTitle'),(lang==='pl'?'Za mały budżet. Koszt produkcji: ':'Insufficient funds. Production cost: ')+money(v));return;}
+ state.funds-=v;addFin('Production: '+x.n,-v);
+ if(BOOSTER_MODELS.includes(x.n)){state.boosters.push({id:uid(),model:x.n,name:x.n+' '+(state.boosters.length+1),flights:0,status:'Nowy'});}
+ else if(SHIP_MODELS.includes(x.n)){state.ships.push({id:uid(),model:x.n,name:x.n+' '+(state.ships.length+1),flights:0,status:'Nowy'});}
+ else {d.stock++;state.production[x.n]=d;}
+ persist();render();toast(t('production'),lang==='pl'?'Wyprodukowano element.':'Item produced.');
+}
+function destroyProduct(i){
+ const x=PRODUCTS[i],d=state.production[x.n]||{price:x.p,stock:0},stock=Number(d.stock)||0;
+ if(isVehicleProduct(x)||stock<1)return;
+ d.stock=stock-1;state.production[x.n]=d;persist();render();toast(t('production'),lang==='pl'?'Usunięto 1 element z magazynu.':'Destroyed 1 stored item.');
+}
+
+function addContract(){const name=document.getElementById('cName').value.trim();const required=Math.max(1,Math.floor(+document.getElementById('cRequired').value||1));const requiredSats=Math.max(0,Math.floor(+document.getElementById('cSats').value||0));if(!name){uiAlert(t('errorTitle'),lang==='pl'?'Podaj nazwę programu.':'Enter a program name.');return;}let c={id:uid(),name,type:document.getElementById('cType').value,required,requiredSats,reward:+document.getElementById('cReward').value||0,perFlight:+document.getElementById('cPerFlight').value||0,desc:document.getElementById('cDesc').value.trim(),flights:0,sats:0,completed:false,createdDate:state.gameDate};state.contracts.unshift(c);['cName','cDesc'].forEach(id=>document.getElementById(id).value='');persist();render();toast(t('programs'),(lang==='pl'?'Utworzono program: ':'Program created: ')+c.name)}
+function renderContracts(){
+  const el=document.getElementById('contractList');
+  if(!el)return;
+  el.innerHTML=state.contracts.length?state.contracts.map(c=>{
+    let pct=c.required?Math.min(100,Math.round(c.flights/c.required*100)):100;
+    let sp=c.requiredSats?Math.min(100,Math.round(c.sats/c.requiredSats*100)):100;
+    return `<div class="item" style="margin-bottom:10px"><b>🎯 ${esc(c.name)} ${c.completed?'<span class="badge success">'+t('completed')+'</span>':'<span class="badge pending">'+t('active')+'</span>'}</b>
+    <span class="muted">${esc(c.desc||c.type)}${c.createdDate?' • '+formatGameDate(c.createdDate):''}</span>
+    <div style="margin-top:8px">${t('flights')}: <b>${c.flights}</b> / ${c.required}</div><div class="progress"><div class="bar" style="width:${pct}%"></div></div>
+    <div>${t('payload')}: <b>${c.sats}</b> / ${c.requiredSats||0}</div><div class="progress"><div class="bar" style="width:${sp}%"></div></div>
+    <div>🏆 ${t('rewardShort')}: <b>${money(c.reward)}</b>${c.perFlight?' • '+money(c.perFlight)+'/flight':''}</div></div>`;
+  }).join(''):'<div class="empty">'+t('noPrograms')+'</div>';
+}
+function renderHistory(){document.getElementById('historyList').innerHTML=state.flights.length?`<div style="overflow:auto"><table><tr><th>${t('date')}</th><th>${t('mission')}</th><th>${t('booster')}</th><th>${t('ship')}</th><th>${t('program')}</th><th>${t('goal')}</th><th>${t('payload')}</th><th>${t('result')}</th></tr>${state.flights.map(m=>`<tr><td>${m.date}</td><td><b>${esc(m.name)}</b><br><span class="muted">${esc(m.notes)}</span></td><td>${esc(m.booster)}<br><span class="muted">${esc(m.boosterModel)} • #${m.boosterFlight}</span></td><td>${esc(m.ship)}<br><span class="muted">${esc(m.shipModel)} • #${m.shipFlight}</span></td><td>${esc(m.program)}</td><td>${esc(m.destination)}</td><td>${m.sats}${m.payloadMode&&m.payloadMode!=='none'?`<br><span class="muted">${esc(m.payloadName||m.payloadMode)}${m.payloadConstellation?' • '+esc((state.constellations.find(c=>c.id===m.payloadConstellation)||{}).name||''):''}</span>`:''} </td><td><span class="badge ${m.result==='success'?'success':'failure'}">${m.result==='success'?t('success'):t('failure')}</span><br><span class="muted">${m.recovery}</span><br><button class="small secondary" style="margin-top:6px" onclick="editFlight('${esc(m.id)}')">✏️ ${lang==='pl'?'Edytuj':'Edit'}</button></td></tr>`).join('')}</table></div>`:'<div class="empty">'+t('noFlights')+'</div>'}
+async function editFlight(id){
+ const m=state.flights.find(x=>x.id===id);if(!m)return;
+ const body=`<div class="modalGrid">
+  <label class="modalField">${lang==='pl'?'Nazwa misji':'Mission name'}<input id="efName" value="${esc(m.name||'')}"></label>
+  <label class="modalField">${t('result')}<select id="efResult"><option value="success" ${m.result==='success'?'selected':''}>${t('success')}</option><option value="failure" ${m.result==='failure'?'selected':''}>${t('failure')}</option></select></label>
+ </div>
+ <div class="modalGrid" style="margin-top:12px">
+  <label class="modalField">${t('boosterFate')}<select id="efRecovery"><option value="recovered" ${m.recovery==='recovered'?'selected':''}>${t('recovered')}</option><option value="lost" ${m.recovery==='lost'?'selected':''}>${t('lost')}</option><option value="unknown" ${m.recovery==='unknown'?'selected':''}>${t('unknown')}</option></select></label>
+  <label class="modalField">${t('program')}<input id="efProgram" value="${esc(m.program||'')}"></label>
+ </div>
+ <div class="modalGrid" style="margin-top:12px">
+  <label class="modalField">${t('destination')}<input id="efDestination" value="${esc(m.destination||'')}"></label>
+  <label class="modalField">${t('income')} ($)<input id="efIncome" type="number" value="${Number(m.income)||0}"></label>
+ </div>
+ <div class="modalGrid" style="margin-top:12px">
+  <label class="modalField">${t('flightCost')} ($)<input id="efCost" type="number" value="${Number(m.cost)||0}"></label>
+  <label class="modalField">${t('date')}<input id="efDate" type="date" value="${esc(m.date||state.gameDate)}"></label>
+ </div>
+ <label class="modalField" style="margin-top:12px">${t('notes')}<textarea id="efNotes" rows="3">${esc(m.notes||'')}</textarea></label>
+ <div class="notice" style="margin-top:12px">${lang==='pl'?'Edycja zmienia dane lotu i koryguje bilans o różnicę przychodu/kosztu. Nie przebudowuje automatycznie historii floty ani ładunku.':'Editing changes the flight record and adjusts the balance by the income/cost difference. Fleet and payload history are not automatically rebuilt.'}</div>`;
+ const r=await new Promise(resolve=>{modalResolver=resolve;openModal(lang==='pl'?'Edytuj lot':'Edit flight',body,`<button class="secondary" onclick="closeModal(null)">${t('modalCancel')}</button><button onclick="closeModal({name:document.getElementById('efName').value,result:document.getElementById('efResult').value,recovery:document.getElementById('efRecovery').value,program:document.getElementById('efProgram').value,destination:document.getElementById('efDestination').value,income:document.getElementById('efIncome').value,cost:document.getElementById('efCost').value,date:document.getElementById('efDate').value,notes:document.getElementById('efNotes').value})">${t('modalSave')}</button>`);});
+ if(!r)return;
+ const oldNet=(Number(m.income)||0)-(Number(m.cost)||0);
+ const newIncome=Math.max(0,Number(r.income)||0),newCost=Math.max(0,Number(r.cost)||0);
+ const newDate=parseGameDate(r.date)?r.date:m.date;
+ m.name=String(r.name||'').trim()||m.name;m.result=r.result;m.recovery=r.recovery;m.program=String(r.program||'');m.destination=String(r.destination||'');m.income=newIncome;m.cost=newCost;m.date=newDate;m.notes=String(r.notes||'');
+ const delta=(newIncome-newCost)-oldNet;
+ if(delta){state.funds+=delta;addFinAt((lang==='pl'?'Korekta lotu: ':'Flight edit adjustment: ')+m.name,delta,state.gameDate);}
+ persist();render();toast(t('history'),lang==='pl'?'Lot został zaktualizowany.':'Flight updated.');
+}
+
+function renderDash(){document.getElementById('dashHistory').innerHTML=state.flights.slice(0,6).map(m=>`<div class="item" style="margin-bottom:7px"><b>${esc(m.name)} <span class="badge ${m.result==='success'?'success':'failure'}">${m.result==='success'?'OK':'FAIL'}</span></b><span class="muted">${m.booster} #${m.boosterFlight} + ${m.ship} #${m.shipFlight} • ${m.destination}</span></div>`).join('')||'<div class="empty">'+t('noFlights')+'</div>';document.getElementById('dashContracts').innerHTML=state.contracts.filter(c=>!c.completed).slice(0,5).map(c=>`<div class="item" style="margin-bottom:7px"><b>${esc(c.name)}</b><span class="muted">${c.flights}/${c.required} ${t('flights')} • ${c.sats}/${c.requiredSats} ${t('payload').toLowerCase()}</span></div>`).join('')||'<div class="empty">'+t('noPrograms')+'</div>'}
+function init(){
+ let a=getSaves(),names=Object.keys(a);
+ if(!names.length){
+   try{
+     const old=JSON.parse(localStorage.getItem('KSA_V3_SAVES')||'{}');
+     if(old&&typeof old==='object'&&!Array.isArray(old)){a=old;names=Object.keys(old);}
+   }catch(e){}
+ }
+ if(names.length)state=migrate(a[names[0]],SAVE_VERSION);
+ state=migrate(state,SAVE_VERSION);
+ persist();
+ render();
+}
+
+init();
+</script>
+</body>
+</html>
